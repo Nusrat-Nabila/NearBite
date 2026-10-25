@@ -1,3 +1,4 @@
+# Restaurant app API views: menu, orders and restaurant profile endpoints.
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.shortcuts import get_object_or_404

@@ -1,3 +1,4 @@
+# Shared pytest fixtures for the backend test suite.
 import pytest
 from django.core.cache import cache
 from rest_framework.test import APIClient
