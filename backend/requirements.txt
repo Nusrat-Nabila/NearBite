@@ -6,3 +6,6 @@ djangorestframework_simplejwt==5.5.1
 PyJWT==2.15.1
 sqlparse==0.6.0
 tzdata==2026.5
+
+pillow==12.3.0
+python-dotenv==1.2.4

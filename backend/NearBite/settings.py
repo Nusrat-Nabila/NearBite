@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'account.apps.AccountConfig',
-    'admin.apps.AdminConfig',
+    'adminpanel.apps.AdminPanelConfig',
     'restaurant.apps.RestaurantConfig',
     'customer.apps.CustomerConfig',
 ]
@@ -142,6 +142,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True   # must be True for port 587
+EMAIL_USE_SSL = False  # make sure this is not True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''   # <-- your 16-char App Password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 
 REST_FRAMEWORK = {
   'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -163,8 +172,3 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_CREDENTIALS = True
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
