@@ -1,0 +1,191 @@
+
+/* ========================================
+   LOGGED-IN USER SECTION
+======================================== */
+
+.nav-user-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.nav-user-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #a5220b;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.nav-user-button:hover {
+  background: rgba(156, 25, 0, 0.06);
+}
+
+/* ========================================
+   USER PROFILE AVATAR
+======================================== */
+
+.nav-user-avatar {
+  display: block;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: 50%;
+  border: 2px solid #f5d5bc;
+  object-fit: cover;
+  object-position: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f8dfc6;
+}
+
+/* Fallback placeholder styling */
+
+.nav-user-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8dfc6;
+  color: #9c1900;
+  font-size: 19px;
+  line-height: 1;
+}
+
+/* ========================================
+   USER NAME
+======================================== */
+
+.nav-user-name {
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  color: #a5220b;
+}
+
+/* ========================================
+   DROPDOWN ARROW
+======================================== */
+
+.nav-user-button .chev {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.nav-user-button .chev.chev-open {
+  transform: rotate(180deg);
+}
+
+/* ========================================
+   USER DROPDOWN MENU
+======================================== */
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  width: 155px;
+  padding: 7px;
+
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+
+  background: #f8e5cc;
+  border: 1px solid #ead4b8;
+  border-radius: 14px;
+
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.16);
+  z-index: 2000;
+}
+
+.user-dropdown.user-dropdown-open {
+  display: flex;
+}
+
+/* Dropdown buttons */
+
+.user-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px 8px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+  color: #29221d;
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.user-dropdown button:hover {
+  background: #f0d4b0;
+}
+
+.user-dropdown button:focus-visible {
+  outline: 2px solid #9c1900;
+  outline-offset: 2px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 600px) {
+  .nav-user-button {
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .nav-user-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .nav-user-name {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+  }
+
+  .user-dropdown {
+    width: 145px;
+  }
+
+  .user-dropdown button {
+    font-size: 13px;
+    padding: 10px 7px;
+  }
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-user-button,
+  .nav-user-button .chev,
+  .user-dropdown button {
+    transition: none;
+  }
+}

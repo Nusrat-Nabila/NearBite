@@ -1,0 +1,493 @@
+
+/* ========== CUSTOMER REGISTRATION FORM ========== */
+
+.customer-form-page {
+  --form-cream: #f7e3cc;
+  --form-red: #a8200c;
+  --form-red-hover: #bd2b12;
+  --form-orange: #f26a1b;
+  --form-text: #191919;
+  --form-muted: #777;
+
+  min-height: 100vh;
+  padding: 18px 5.5% 30px;
+  background: var(--form-cream);
+  color: var(--form-text);
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  animation: customer-page-enter 0.45s ease both;
+}
+
+.customer-form-page *,
+.customer-form-page *::before,
+.customer-form-page *::after {
+  box-sizing: border-box;
+}
+
+/* Header and NearBite brand */
+
+.customer-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.customer-form-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.customer-form-brand:hover {
+  transform: translateY(-2px);
+}
+
+.customer-form-brand img {
+  display: block;
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+
+.customer-brand-name {
+  display: inline-flex;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+
+.customer-brand-name span:first-child {
+  color: #111;
+}
+
+.customer-brand-name span:last-child {
+  color: var(--form-red);
+}
+
+.customer-form-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  background: transparent;
+  color: #222;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.customer-form-back:hover {
+  color: var(--form-red);
+  transform: translateX(-4px);
+}
+
+/* Form heading */
+
+.customer-form-content {
+  width: 100%;
+  max-width: 390px;
+  margin: 25px auto 0;
+  animation: customer-form-enter 0.65s ease both;
+}
+
+.customer-form-heading {
+  margin-bottom: 27px;
+  text-align: center;
+}
+
+.customer-form-heading h1 {
+  margin: 0 0 5px;
+  font-size: 19px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.customer-form-heading p {
+  margin: 0;
+  color: #646464;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Form layout */
+
+.customer-form {
+  width: 100%;
+}
+
+.customer-field {
+  min-width: 0;
+  margin-bottom: 15px;
+}
+
+.customer-field > label {
+  display: block;
+  margin: 0 0 5px 3px;
+  color: #222;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Inputs */
+
+.customer-input-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 39px;
+  padding: 0 10px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: #c9c9c9;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.customer-input-wrap:hover {
+  background: #d1d1d1;
+}
+
+.customer-input-wrap:focus-within {
+  border-color: var(--form-red);
+  background: #fffaf5;
+  box-shadow: 0 0 0 3px rgba(168, 32, 12, 0.09);
+}
+
+.customer-input-icon {
+  display: grid;
+  flex: 0 0 17px;
+  place-items: center;
+  margin-right: 8px;
+  color: #191919;
+}
+
+.customer-input-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.customer-input-wrap input,
+.customer-input-wrap select {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #222;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.customer-input-wrap input::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+/* City and area */
+
+.customer-location-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.customer-select-wrap select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.customer-select-wrap select:invalid {
+  color: #777;
+}
+
+.customer-select-wrap select:disabled {
+  color: #888;
+  cursor: not-allowed;
+}
+
+.customer-select-wrap option {
+  color: #222;
+  background: #fff;
+}
+
+.customer-select-wrap {
+  position: relative;
+}
+
+.customer-select-wrap::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-right: 1.8px solid #333;
+  border-bottom: 1.8px solid #333;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.customer-select-wrap select {
+  padding-right: 18px;
+}
+
+/* Password visibility buttons */
+
+.customer-eye-button {
+  display: grid;
+  flex: 0 0 27px;
+  width: 27px;
+  height: 29px;
+  place-items: center;
+  margin-left: 5px;
+  padding: 3px;
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.customer-eye-button:hover {
+  background: rgba(0, 0, 0, 0.07);
+  transform: scale(1.05);
+}
+
+.customer-eye-button img {
+  display: block;
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
+}
+
+/* Feedback message */
+
+.customer-form-notice {
+  margin: 0 0 13px;
+  color: #a8200c;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.customer-form-notice.success {
+  color: #187542;
+}
+
+/* Create account button */
+
+.customer-form-submit {
+  display: block;
+  width: auto;
+  min-width: 125px;
+  min-height: 36px;
+  margin: 27px auto 0;
+  padding: 9px 20px;
+  border-radius: 7px;
+  background: var(--form-red);
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.17);
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.customer-form-submit:hover {
+  transform: translateY(-3px);
+  background: var(--form-red-hover);
+  box-shadow: 0 7px 14px rgba(168, 32, 12, 0.22);
+}
+
+.customer-form-submit:active {
+  transform: scale(0.97);
+}
+
+.customer-form-submit:focus-visible,
+.customer-form-back:focus-visible,
+.customer-form-brand:focus-visible,
+.customer-eye-button:focus-visible,
+.customer-form-login-link:focus-visible {
+  outline: 2px solid #168bff;
+  outline-offset: 3px;
+}
+
+/* Terms and login link */
+
+.customer-form-terms {
+  margin: 15px 0 0;
+  color: #393939;
+  font-size: 11px;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.customer-form-terms a {
+  color: var(--form-red);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.customer-form-terms a:hover {
+  color: var(--form-orange);
+  text-decoration: underline;
+}
+
+.customer-form-login-prompt {
+  margin: 29px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.customer-form-login-link {
+  padding: 0;
+  background: transparent;
+  color: var(--form-red);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.customer-form-login-link:hover {
+  color: var(--form-orange);
+  text-decoration: underline;
+}
+
+/* Animations */
+
+@keyframes customer-page-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes customer-form-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive layout */
+
+@media (min-width: 1400px) {
+  .customer-form-content {
+    max-width: 420px;
+    margin-top: 35px;
+  }
+
+  .customer-form-heading h1 {
+    font-size: 21px;
+  }
+
+  .customer-field {
+    margin-bottom: 17px;
+  }
+
+  .customer-input-wrap {
+    height: 42px;
+  }
+
+  .customer-form-login-prompt {
+    margin-top: 35px;
+  }
+}
+
+@media (max-width: 600px) {
+  .customer-form-page {
+    padding: 17px 20px 28px;
+  }
+
+  .customer-form-content {
+    max-width: 390px;
+    margin-top: 32px;
+  }
+
+  .customer-form-heading {
+    margin-bottom: 24px;
+  }
+
+  .customer-location-row {
+    gap: 10px;
+  }
+
+  .customer-field {
+    margin-bottom: 14px;
+  }
+
+  .customer-input-wrap {
+    height: 41px;
+  }
+
+  .customer-form-login-prompt {
+    margin-top: 27px;
+  }
+}
+
+@media (max-width: 360px) {
+  .customer-form-page {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .customer-brand-name {
+    font-size: 18px;
+  }
+
+  .customer-form-content {
+    margin-top: 25px;
+  }
+
+  .customer-form-heading h1 {
+    font-size: 17px;
+  }
+
+  .customer-location-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .customer-form-page,
+  .customer-form-content {
+    animation: none;
+  }
+
+  .customer-form-page *,
+  .customer-form-page *::before,
+  .customer-form-page *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

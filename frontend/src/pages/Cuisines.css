@@ -1,0 +1,749 @@
+
+/* =================================
+   CUISINE PAGE
+================================= */
+
+.cuisine-page {
+  min-height: 100vh;
+  background: #fff;
+  color: #171717;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.cuisine-main {
+  width: min(100% - 40px, 1280px);
+  margin: 22px auto 48px;
+}
+
+.cuisine-page .reveal {
+  min-width: 0;
+}
+
+.cuisine-hero-reveal {
+  width: 100%;
+}
+
+.cuisine-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 14px;
+  background-color: #f7e3cc;
+  background-position: center;
+  background-size: cover;
+}
+
+.cuisine-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(255, 246, 234, 0.08);
+}
+
+.cuisine-hero-content {
+  max-width: 650px;
+  padding: 22px;
+  text-align: center;
+}
+
+.cuisine-hero-content h1 {
+  margin: 0 0 7px;
+  font-size: clamp(27px, 3vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.cuisine-hero-content h1 span {
+  color: #a8200c;
+}
+
+.cuisine-hero-content p {
+  margin: 0;
+  color: #555;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* =================================
+   FAVOURITE CUISINES
+================================= */
+
+.cuisine-favourites {
+  margin-top: 36px;
+}
+
+.cuisine-section-heading {
+  margin-bottom: 18px;
+}
+
+.cuisine-section-heading h2 {
+  margin: 0;
+  font-size: clamp(23px, 2.2vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.cuisine-section-heading p {
+  margin: 6px 0 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.cuisine-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 12px;
+}
+
+.cuisine-item-reveal {
+  min-width: 0;
+  height: 100%;
+}
+
+.cuisine-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 125px;
+  padding: 8px 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  background: transparent;
+  color: #171717;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+}
+
+.cuisine-choice:hover {
+  transform: translateY(-5px);
+  background: #fff5eb;
+  border-color: #f1d7c5;
+  box-shadow: 0 7px 18px rgba(91, 43, 19, 0.09);
+}
+
+.cuisine-choice.selected {
+  background: #f38e7d;
+  border-color: #f38e7d;
+}
+
+.cuisine-choice:focus-visible {
+  outline: 2px solid #a8200c;
+  outline-offset: 3px;
+}
+
+.cuisine-choice-image {
+  display: grid;
+  width: 100%;
+  height: 92px;
+  place-items: center;
+  overflow: hidden;
+}
+
+.cuisine-choice-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s ease;
+}
+
+.cuisine-choice:hover .cuisine-choice-image img {
+  transform: translateY(-3px) scale(1.07);
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.12));
+}
+
+.cuisine-choice > span {
+  display: block;
+  margin-top: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* =================================
+   FILTERS + RESTAURANTS
+================================= */
+
+.cuisine-results-layout {
+  display: grid;
+  grid-template-columns: 215px minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+  margin-top: 42px;
+  scroll-margin-top: 24px;
+}
+
+.cuisine-sidebar {
+  min-width: 0;
+}
+
+.cuisine-sidebar .filters {
+  position: sticky;
+  top: 18px;
+  max-height: calc(100vh - 36px);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: #f7e3cc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+}
+
+.cuisine-results {
+  min-width: 0;
+}
+
+.cuisine-results-heading {
+  margin: 0 0 26px;
+}
+
+.cuisine-results-heading h2 {
+  margin: 0 0 5px;
+  font-size: clamp(23px, 2.4vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  overflow-wrap: anywhere;
+}
+
+.cuisine-results-heading p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+}
+
+/* =================================
+   RESTAURANT CARDS
+================================= */
+
+.cuisine-restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 32px 22px;
+}
+
+.cuisine-card-reveal {
+  min-width: 0;
+  height: 100%;
+}
+
+.cuisine-restaurant-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid #e5ded6;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.17);
+  transition:
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.cuisine-restaurant-card:hover {
+  border-color: #e3c7b8;
+  box-shadow: 0 9px 22px rgba(69, 37, 17, 0.14);
+}
+
+.cuisine-card-image {
+  position: relative;
+  flex-shrink: 0;
+  height: 125px;
+  overflow: hidden;
+  background: #f1e4d6;
+}
+
+.cuisine-card-image > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cuisine-restaurant-card:hover .cuisine-card-image > img {
+  transform: scale(1.06);
+}
+
+.cuisine-discount {
+  position: absolute;
+  top: 8px;
+  left: 7px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: #a8200c;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.cuisine-heart {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(168, 32, 12, 0.93);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.cuisine-heart:hover {
+  transform: scale(1.12);
+}
+
+.cuisine-heart:active {
+  transform: scale(0.92);
+}
+
+.cuisine-heart.is-liked {
+  background: #d63a2f;
+}
+
+.cuisine-status {
+  position: absolute;
+  bottom: 7px;
+  left: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.cuisine-status.open {
+  color: #178348;
+}
+
+.cuisine-status.closed {
+  color: #b3261e;
+  background: #fff0ed;
+}
+
+.cuisine-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.cuisine-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 105px;
+  padding: 10px 9px;
+  box-sizing: border-box;
+}
+
+.cuisine-card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.cuisine-card-title-row h3 {
+  min-width: 0;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.cuisine-rating {
+  flex-shrink: 0;
+  color: #a8200c;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.cuisine-card-location {
+  margin: 6px 0 0;
+  color: #777;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.cuisine-card-dish {
+  margin: 5px 0 0;
+  color: #5e5e5e;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.cuisine-card-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.cuisine-card-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+}
+
+.cuisine-card-price strong {
+  color: #a8200c;
+}
+
+.cuisine-card-price del {
+  color: #888;
+}
+
+.cuisine-menu-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 27px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: #a8200c;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.cuisine-menu-button:hover {
+  transform: translateY(-2px);
+  background: #c43117;
+  box-shadow: 0 4px 9px rgba(168, 32, 12, 0.2);
+}
+
+.cuisine-menu-button:active {
+  transform: scale(0.97);
+}
+
+/* =================================
+   EMPTY STATE
+================================= */
+
+.cuisine-empty {
+  padding: 42px 18px;
+  border: 1px solid #f0dfca;
+  border-radius: 14px;
+  background: #fffaf5;
+  text-align: center;
+}
+
+.cuisine-empty > span {
+  font-size: 36px;
+}
+
+.cuisine-empty h3 {
+  margin: 12px 0 8px;
+  font-size: 20px;
+}
+
+.cuisine-empty p {
+  color: #777;
+  font-size: 13px;
+}
+
+.cuisine-empty button {
+  margin-top: 10px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 7px;
+  background: #a8200c;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* =================================
+   PAGINATION
+================================= */
+
+.cuisine-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 34px 0 20px;
+}
+
+.cuisine-pagination > p {
+  margin: 0;
+  color: #555;
+  font-size: 13px;
+}
+
+.cuisine-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cuisine-pagination-controls button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: #f0dfca;
+  color: #27211c;
+  font-size: 19px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.cuisine-pagination-controls button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #e6c8a6;
+}
+
+.cuisine-pagination-controls button.current {
+  background: #a8200c;
+  color: #fff;
+  font-size: 13px;
+}
+
+.cuisine-pagination-controls button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =================================
+   LARGE SCREENS
+================================= */
+
+@media (min-width: 1500px) {
+  .cuisine-card-image {
+    height: 155px;
+  }
+
+  .cuisine-card-body {
+    min-height: 115px;
+    padding: 12px;
+  }
+
+  .cuisine-card-title-row h3 {
+    font-size: 13px;
+  }
+}
+
+/* =================================
+   TABLETS
+================================= */
+
+@media (max-width: 1100px) {
+  .cuisine-results-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .cuisine-restaurant-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px 16px;
+  }
+
+  .cuisine-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .cuisine-card-image {
+    height: 120px;
+  }
+}
+
+/* =================================
+   MOBILE
+================================= */
+
+@media (max-width: 760px) {
+  .cuisine-main {
+    width: calc(100% - 28px);
+    margin-top: 15px;
+  }
+
+  .cuisine-hero {
+    min-height: 220px;
+    border-radius: 11px;
+  }
+
+  .cuisine-hero-content {
+    padding: 16px;
+  }
+
+  .cuisine-hero-content h1 {
+    font-size: 25px;
+  }
+
+  .cuisine-hero-content p {
+    font-size: 12px;
+  }
+
+  .cuisine-favourites {
+    margin-top: 28px;
+  }
+
+  .cuisine-section-heading h2 {
+    font-size: 23px;
+  }
+
+  .cuisine-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .cuisine-choice {
+    min-height: 115px;
+    padding: 6px 4px;
+  }
+
+  .cuisine-choice-image {
+    height: 82px;
+  }
+
+  .cuisine-results-layout {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    margin-top: 32px;
+  }
+
+  .cuisine-sidebar .filters {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .cuisine-results-heading {
+    margin-bottom: 20px;
+  }
+
+  .cuisine-results-heading h2 {
+    font-size: 23px;
+  }
+
+  .cuisine-restaurant-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+
+  .cuisine-card-image {
+    height: 125px;
+  }
+
+  .cuisine-card-body {
+    min-height: 112px;
+    padding: 9px 8px;
+  }
+
+  .cuisine-card-title-row h3 {
+    font-size: 11px;
+  }
+
+  .cuisine-pagination {
+    margin-top: 26px;
+  }
+}
+
+@media (max-width: 420px) {
+  .cuisine-hero {
+    min-height: 195px;
+  }
+
+  .cuisine-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cuisine-choice-image {
+    height: 90px;
+  }
+
+  .cuisine-restaurant-grid {
+    gap: 15px 9px;
+  }
+
+  .cuisine-card-image {
+    height: 105px;
+  }
+
+  .cuisine-card-body {
+    min-height: 115px;
+  }
+
+  .cuisine-card-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cuisine-pagination > p {
+    font-size: 11px;
+  }
+}
+
+/* =================================
+   ACCESSIBILITY
+================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .cuisine-page *,
+  .cuisine-page *::before,
+  .cuisine-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  .cuisine-page .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

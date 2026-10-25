@@ -1,0 +1,475 @@
+
+/* ===== RESTAURANT OWNER REGISTRATION ===== */
+
+.owner-form-page {
+  --owner-cream: #f7e3cc;
+  --owner-red: #a8200c;
+  --owner-orange: #f26a1b;
+  --owner-text: #171717;
+  --owner-muted: #666;
+
+  min-height: 100vh;
+  padding: 20px 24px 28px;
+  background: var(--owner-cream);
+  color: var(--owner-text);
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  animation: owner-page-enter 0.45s ease both;
+}
+
+.owner-form-page *,
+.owner-form-page *::before,
+.owner-form-page *::after {
+  box-sizing: border-box;
+}
+
+/* Logo and Back */
+
+.owner-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.owner-form-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.25s ease;
+}
+
+.owner-form-brand:hover {
+  transform: translateY(-1px);
+}
+
+.owner-form-brand > img {
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.owner-brand-name {
+  display: inline-flex;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.owner-brand-name span:first-child {
+  color: #111;
+}
+
+.owner-brand-name span:last-child {
+  color: var(--owner-red);
+}
+
+.owner-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #171717;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.owner-back-button:hover {
+  color: var(--owner-red);
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateX(-3px);
+}
+
+/* Heading */
+
+.owner-form-content {
+  width: 100%;
+  max-width: 410px;
+  margin: 38px auto 0;
+  animation: owner-form-enter 0.65s ease both;
+}
+
+.owner-form-heading {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.owner-form-heading h1 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.owner-form-heading p {
+  margin: 0;
+  color: var(--owner-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Form layout */
+
+.owner-registration-form {
+  width: 100%;
+}
+
+.owner-field {
+  min-width: 0;
+  margin-bottom: 13px;
+}
+
+.owner-field > label {
+  display: block;
+  margin: 0 0 5px 3px;
+  font-size: 11px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.owner-input-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: #c9c9c9;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.owner-input-wrap:focus-within {
+  border-color: var(--owner-red);
+  background: #f2f2f2;
+  box-shadow: 0 0 0 3px rgba(168, 32, 12, 0.09);
+}
+
+.owner-field-icon {
+  display: grid;
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+  margin-right: 7px;
+  place-items: center;
+  color: #171717;
+}
+
+.owner-field-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.owner-input-wrap > input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #171717;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.owner-input-wrap > input::placeholder {
+  color: #686868;
+  opacity: 1;
+}
+
+/* City and area */
+
+.owner-location-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.owner-location-row .owner-field {
+  min-width: 0;
+}
+
+.owner-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.owner-select-wrap::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid #555;
+  border-bottom: 1.5px solid #555;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.owner-select-wrap select {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 0 28px 0 9px;
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  outline: none;
+  background: #c9c9c9;
+  color: #4c4c4c;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.owner-select-wrap select:focus {
+  border-color: var(--owner-red);
+  background: #f2f2f2;
+  box-shadow: 0 0 0 3px rgba(168, 32, 12, 0.09);
+}
+
+.owner-select-wrap select:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Password visibility icons */
+
+.owner-eye-button {
+  display: grid;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 28px;
+  padding: 4px;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.owner-eye-button:hover {
+  background: rgba(0, 0, 0, 0.07);
+  transform: scale(1.05);
+}
+
+.owner-eye-button img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* Form feedback */
+
+.owner-form-message {
+  margin: 3px 0 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.owner-form-message.error {
+  color: #a8200c;
+}
+
+.owner-form-message.success {
+  color: #176b36;
+}
+
+/* Create account button */
+
+.owner-submit-button {
+  display: block;
+  min-width: 116px;
+  min-height: 34px;
+  margin: 24px auto 0;
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--owner-red);
+  color: #fff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.owner-submit-button:hover {
+  transform: translateY(-2px);
+  background: #bd2b12;
+  box-shadow: 0 6px 13px rgba(168, 32, 12, 0.22);
+}
+
+.owner-submit-button:active {
+  transform: scale(0.97);
+}
+
+/* Terms and login link */
+
+.owner-terms {
+  margin: 15px 0 0;
+  color: #333;
+  font-size: 10px;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.owner-terms a {
+  color: var(--owner-red);
+  text-decoration: none;
+}
+
+.owner-terms a:hover {
+  text-decoration: underline;
+}
+
+.owner-login-prompt {
+  margin: 22px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.owner-login-prompt button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--owner-red);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.owner-login-prompt button:hover {
+  color: var(--owner-orange);
+  text-decoration: underline;
+}
+
+/* Animations */
+
+@keyframes owner-page-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes owner-form-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+
+@media (min-width: 1000px) {
+  .owner-form-content {
+    margin-top: 36px;
+  }
+}
+
+@media (max-width: 520px) {
+  .owner-form-page {
+    padding: 17px 18px 24px;
+  }
+
+  .owner-form-content {
+    max-width: 410px;
+    margin-top: 32px;
+  }
+
+  .owner-form-heading {
+    margin-bottom: 24px;
+  }
+
+  .owner-form-heading h1 {
+    font-size: 16px;
+  }
+
+  .owner-location-row {
+    gap: 12px;
+  }
+
+  .owner-field {
+    margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 350px) {
+  .owner-form-page {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .owner-brand-name {
+    font-size: 17px;
+  }
+
+  .owner-location-row {
+    gap: 8px;
+  }
+
+  .owner-form-heading h1 {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .owner-form-page,
+  .owner-form-content {
+    animation: none;
+  }
+
+  .owner-form-page *,
+  .owner-form-page *::before,
+  .owner-form-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

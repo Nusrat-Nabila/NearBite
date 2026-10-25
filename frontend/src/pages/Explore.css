@@ -1,0 +1,776 @@
+
+/* ========================================
+   EXPLORE PAGE
+======================================== */
+
+.explore-page {
+  min-height: 100vh;
+  background: #fff;
+  color: #171717;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: clip;
+}
+
+.explore-main {
+  width: min(100% - 40px, 1280px);
+  margin: 22px auto 48px;
+}
+
+/* ========================================
+   REVEAL WRAPPERS
+   Compatible with existing Reveal.jsx
+======================================== */
+
+.explore-main .reveal {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.explore-card-reveal {
+  min-width: 0;
+  height: 100%;
+}
+
+/* ========================================
+   HERO BANNER
+======================================== */
+
+.explore-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 305px;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 14px;
+  background-color: #f7e3cc;
+  background-position: center;
+  background-size: cover;
+}
+
+.explore-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 243, 223, 0.1),
+    rgba(255, 243, 223, 0) 85%
+  );
+  pointer-events: none;
+}
+
+.explore-hero-content {
+  width: min(58%, 570px);
+  margin-left: 22px;
+  padding: 20px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 12px;
+  background: rgba(255, 246, 232, 0.76);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.explore-hero-content h1 {
+  margin: 0 0 6px;
+  font-size: clamp(24px, 2.5vw, 34px);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.explore-hero-content h1 span {
+  color: #a8200c;
+}
+
+.explore-hero-content p {
+  max-width: 430px;
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ========================================
+   MAIN HEADING
+======================================== */
+
+.explore-heading {
+  margin: 76px 0 28px;
+}
+
+.explore-heading h2 {
+  margin: 0 0 5px;
+  font-size: clamp(23px, 2.2vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+
+.explore-heading p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   FILTERS + RESULTS
+======================================== */
+
+.explore-layout {
+  display: grid;
+  grid-template-columns: 215px minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+}
+
+.explore-sidebar {
+  min-width: 0;
+}
+
+.explore-sidebar .filters {
+  position: sticky;
+  top: 18px;
+  max-height: calc(100vh - 36px);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: #f7e3cc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+}
+
+.explore-results {
+  min-width: 0;
+}
+
+/* ========================================
+   RESTAURANT GRID
+======================================== */
+
+.explore-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 35px 22px;
+}
+
+/* Reveal wrapper must not break grid sizing */
+.explore-card-grid > .explore-card-reveal {
+  min-width: 0;
+  height: 100%;
+}
+
+.explore-card-reveal > .explore-restaurant-card {
+  height: 100%;
+}
+
+.explore-restaurant-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid #e5ded6;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.17);
+  transition:
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.explore-restaurant-card:hover {
+  border-color: #e3c7b8;
+  box-shadow: 0 9px 22px rgba(69, 37, 17, 0.14);
+}
+
+/* ========================================
+   CARD IMAGE
+======================================== */
+
+.explore-card-image {
+  position: relative;
+  flex-shrink: 0;
+  height: 125px;
+  overflow: hidden;
+  background: #f1e4d6;
+}
+
+.explore-card-image > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.explore-restaurant-card:hover .explore-card-image > img {
+  transform: scale(1.06);
+}
+
+.explore-discount {
+  position: absolute;
+  top: 8px;
+  left: 7px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: #a8200c;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.explore-heart {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(168, 32, 12, 0.93);
+  color: white;
+  font-size: 23px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.explore-heart:hover {
+  transform: scale(1.12);
+}
+
+.explore-heart:active {
+  transform: scale(0.92);
+}
+
+.explore-heart.is-liked {
+  background: #d63a2f;
+}
+
+.explore-status {
+  position: absolute;
+  bottom: 7px;
+  left: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.explore-status.open {
+  color: #178348;
+}
+
+.explore-status.closed {
+  color: #b3261e;
+  background: #fff0ed;
+}
+
+.explore-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ========================================
+   CARD CONTENT
+======================================== */
+
+.explore-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 105px;
+  padding: 10px 9px;
+  box-sizing: border-box;
+}
+
+.explore-card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.explore-card-title-row h3 {
+  min-width: 0;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.explore-rating {
+  flex-shrink: 0;
+  color: #a8200c;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.explore-card-location {
+  margin: 6px 0 0;
+  color: #777;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.explore-card-dish {
+  margin: 5px 0 0;
+  color: #5e5e5e;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.explore-card-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.explore-card-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+}
+
+.explore-card-price strong {
+  color: #a8200c;
+}
+
+.explore-card-price del {
+  color: #888;
+}
+
+.explore-menu-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 27px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: #a8200c;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.explore-menu-button:hover {
+  transform: translateY(-2px);
+  background: #c43117;
+  box-shadow: 0 4px 9px rgba(168, 32, 12, 0.2);
+}
+
+.explore-menu-button:active {
+  transform: scale(0.97);
+}
+
+/* ========================================
+   PAGINATION
+======================================== */
+
+.explore-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 34px 0 20px;
+}
+
+.explore-pagination > p {
+  margin: 0;
+  color: #555;
+  font-size: 13px;
+}
+
+.explore-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.explore-pagination-controls button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: #f0dfca;
+  color: #27211c;
+  font-size: 19px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.explore-pagination-controls button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #e6c8a6;
+}
+
+.explore-pagination-controls button.current {
+  background: #a8200c;
+  color: white;
+  font-size: 13px;
+}
+
+.explore-pagination-controls button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   LARGE SCREENS
+======================================== */
+
+@media (min-width: 1500px) {
+  .explore-card-image {
+    height: 155px;
+  }
+
+  .explore-card-body {
+    min-height: 115px;
+    padding: 12px;
+  }
+
+  .explore-card-title-row h3 {
+    font-size: 13px;
+  }
+}
+
+/* ========================================
+   TABLETS
+======================================== */
+
+@media (max-width: 1100px) {
+  .explore-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .explore-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px 16px;
+  }
+
+  .explore-card-image {
+    height: 120px;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 760px) {
+  .explore-main {
+    width: calc(100% - 28px);
+    margin-top: 15px;
+  }
+
+  .explore-hero {
+    min-height: 240px;
+    background-position: center;
+    border-radius: 11px;
+  }
+
+  .explore-hero-content {
+    width: 82%;
+    margin: 12px;
+    padding: 14px;
+  }
+
+  .explore-hero-content h1 {
+    font-size: 23px;
+  }
+
+  .explore-hero-content p {
+    font-size: 12px;
+  }
+
+  .explore-heading {
+    margin: 40px 0 20px;
+  }
+
+  .explore-heading h2 {
+    font-size: 23px;
+  }
+
+  .explore-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .explore-sidebar .filters {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .explore-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+
+  .explore-card-image {
+    height: 125px;
+  }
+
+  .explore-card-body {
+    min-height: 112px;
+    padding: 9px 8px;
+  }
+
+  .explore-card-title-row h3 {
+    font-size: 11px;
+  }
+
+  .explore-pagination {
+    margin-top: 26px;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 420px) {
+  .explore-hero {
+    min-height: 210px;
+  }
+
+  .explore-hero-content {
+    width: 90%;
+  }
+
+  .explore-card-grid {
+    gap: 15px 9px;
+  }
+
+  .explore-card-image {
+    height: 105px;
+  }
+
+  .explore-card-body {
+    min-height: 115px;
+  }
+
+  .explore-card-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .explore-pagination > p {
+    font-size: 11px;
+  }
+}
+
+/* Smooth Reveal wrappers */
+
+.explore-hero-reveal,
+.explore-heading-reveal,
+.explore-filter-reveal,
+.explore-card-reveal,
+.explore-pagination-reveal {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.explore-card-grid > .explore-card-reveal {
+  height: 100%;
+}
+
+.explore-card-reveal > .explore-restaurant-card {
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-page .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-page *,
+  .explore-page *::before,
+  .explore-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   NEAR ME (GPS or a typed place)
+======================================== */
+
+.explore-nearme {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  background: #f7f3ee;
+  border-radius: 12px;
+}
+
+.explore-nearme-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.explore-nearme-gps {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #a9230c;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.explore-nearme-gps:hover:not(:disabled) {
+  background: #8f1c09;
+}
+
+.explore-nearme-gps:disabled,
+.explore-nearme-place button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.explore-nearme-place {
+  display: flex;
+  flex: 1 1 260px;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #ddd4ca;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.explore-nearme-place input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+}
+
+.explore-nearme-place button {
+  padding: 0 16px;
+  border: 0;
+  border-left: 1px solid #ddd4ca;
+  background: #f0ebe4;
+  color: #a9230c;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.explore-nearme-sort,
+.explore-nearme-active label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #444;
+}
+
+.explore-nearme-sort select,
+.explore-nearme-active select {
+  padding: 8px 10px;
+  border: 1px solid #ddd4ca;
+  border-radius: 7px;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+}
+
+.explore-nearme-active {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.explore-nearme-active > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.explore-nearme-active button {
+  padding: 6px 12px;
+  border: 1px solid #a9230c;
+  border-radius: 7px;
+  background: #fff;
+  color: #a9230c;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.explore-nearme-error {
+  margin: 10px 0 0;
+  color: #c62828;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.explore-nearme-note {
+  margin: 10px 0 0;
+  color: #777;
+  font-size: 11px;
+}
+
+.explore-card-distance {
+  color: #a9230c;
+  font-weight: 700;
+}

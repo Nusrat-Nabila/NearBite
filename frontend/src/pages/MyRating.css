@@ -1,0 +1,581 @@
+
+/* ==============================
+   MY RATING / MY REVIEW PAGE
+================================ */
+
+.my-rating-page {
+  --rating-red: #9c1900;
+  --rating-orange: #f58220;
+  --rating-text: #242936;
+  --rating-muted: #7b8190;
+
+  min-height: 100vh;
+  background: #f8f9fc;
+  color: var(--rating-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.my-rating-main {
+  min-height: 65vh;
+  padding: 38px 24px 65px;
+}
+
+.my-rating-container {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  animation: myRatingFadeIn 0.45s ease both;
+}
+
+@keyframes myRatingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Page heading */
+
+.my-rating-heading {
+  margin-bottom: 27px;
+}
+
+.my-rating-eyebrow {
+  display: inline-block;
+  margin-bottom: 7px;
+  color: var(--rating-red);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.my-rating-heading h1 {
+  margin: 0;
+  color: #171a22;
+  font-size: clamp(27px, 3vw, 35px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+
+.my-rating-heading p {
+  margin: 8px 0 0;
+  color: var(--rating-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Review list */
+
+.my-rating-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.my-rating-card {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 17px;
+  min-width: 0;
+  padding: 15px;
+  background: #fff;
+  border: 1px solid #eceef3;
+  border-radius: 15px;
+  box-shadow: 0 4px 18px rgb(31 41 55 / 3%);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.my-rating-card:hover {
+  border-color: #ead4d0;
+  box-shadow: 0 7px 23px rgb(31 41 55 / 6%);
+}
+
+.my-rating-card.is-editing {
+  border-color: #e4b9b1;
+  box-shadow: 0 0 0 2px rgb(156 25 0 / 5%);
+}
+
+/* Restaurant image */
+
+.my-rating-restaurant-image {
+  display: block;
+  width: 150px;
+  height: 150px;
+  align-self: start;
+  object-fit: cover;
+  background: #f0f0f0;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+/* Review details */
+
+.my-rating-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.my-rating-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 9px;
+}
+
+.my-rating-card-heading h2 {
+  margin: 0;
+  color: #262a34;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* Star rating */
+
+.my-rating-score {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.my-rating-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.my-rating-star {
+  position: relative;
+  display: inline-grid;
+  width: 19px;
+  height: 22px;
+  padding: 0;
+  place-items: center;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.my-rating-star:disabled {
+  cursor: default;
+}
+
+.my-rating-star-empty,
+.my-rating-star-filled {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  color: #d7d9df;
+  line-height: 22px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.my-rating-star-filled {
+  width: 0;
+  color: var(--rating-red);
+}
+
+.my-rating-value {
+  color: var(--rating-red);
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Review text */
+
+.my-rating-review-text {
+  margin: 0;
+  color: #454a55;
+  font-size: 13px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+/* Edit and delete actions */
+
+.my-rating-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: auto;
+  padding-top: 13px;
+}
+
+.my-rating-actions button {
+  display: inline-flex;
+  min-width: 76px;
+  min-height: 35px;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 15px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.my-rating-actions button:active {
+  transform: scale(0.97);
+}
+
+.my-rating-edit-button,
+.my-rating-cancel {
+  color: var(--rating-red);
+  background: #fff;
+  border-color: #e6b1a8 !important;
+}
+
+.my-rating-edit-button:hover,
+.my-rating-cancel:hover {
+  background: #fff3f0;
+  border-color: var(--rating-red) !important;
+}
+
+.my-rating-delete-button {
+  color: #fff;
+  background: var(--rating-red);
+  border-color: var(--rating-red) !important;
+}
+
+.my-rating-delete-button:hover {
+  background: #7e1400;
+}
+
+/* Edit form */
+
+.my-rating-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.my-rating-edit-label {
+  color: #393e49;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.my-rating-edit-form textarea {
+  display: block;
+  width: 100%;
+  min-height: 95px;
+  padding: 11px 12px;
+  resize: vertical;
+  color: #303541;
+  background: #fff;
+  border: 1px solid #dedfe6;
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.65;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.my-rating-edit-form textarea:focus {
+  border-color: var(--rating-red);
+  box-shadow: 0 0 0 3px rgb(156 25 0 / 8%);
+}
+
+.my-rating-edit-form textarea::placeholder {
+  color: #a0a5b0;
+}
+
+/* Interactive stars while editing */
+
+.my-rating-edit-rating {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  padding: 9px 0 3px;
+}
+
+.my-rating-edit-rating > span {
+  color: #414653;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.my-rating-edit-rating > strong {
+  color: var(--rating-red);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.my-rating-stars-editable {
+  gap: 3px;
+}
+
+.my-rating-stars-editable .my-rating-star {
+  width: 25px;
+  height: 28px;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 27px;
+  line-height: 28px;
+  transition: transform 0.15s ease;
+}
+
+.my-rating-stars-editable .my-rating-star:hover {
+  transform: scale(1.12);
+}
+
+.my-rating-stars-editable .my-rating-star:focus-visible {
+  outline: 2px solid var(--rating-red);
+  outline-offset: 1px;
+}
+
+/* Messages */
+
+.my-rating-message {
+  margin: 0 0 16px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.my-rating-error {
+  color: #b42318;
+  background: #fff0ee;
+  border: 1px solid #ffd1cb;
+}
+
+.my-rating-success {
+  color: #197449;
+  background: #edfaf3;
+  border: 1px solid #c8efda;
+}
+
+/* Empty state */
+
+.my-rating-empty {
+  padding: 55px 20px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #eceef3;
+  border-radius: 15px;
+}
+
+.my-rating-empty-icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 15px;
+  place-items: center;
+  color: var(--rating-red);
+  background: #fff0ed;
+  border-radius: 50%;
+  font-size: 29px;
+}
+
+.my-rating-empty h2 {
+  margin: 0;
+  color: #252a35;
+  font-size: 20px;
+}
+
+.my-rating-empty p {
+  max-width: 380px;
+  margin: 10px auto 20px;
+  color: var(--rating-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.my-rating-empty-button {
+  padding: 11px 18px;
+  color: #fff;
+  background: var(--rating-red);
+  border: 0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.my-rating-empty-button:hover {
+  background: #7e1400;
+}
+
+/* Responsive tablet layout */
+
+@media (max-width: 760px) {
+  .my-rating-main {
+    padding: 30px 18px 48px;
+  }
+
+  .my-rating-card {
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 14px;
+    padding: 12px;
+  }
+
+  .my-rating-restaurant-image {
+    width: 120px;
+    height: 125px;
+  }
+
+  .my-rating-card-heading h2 {
+    font-size: 15px;
+  }
+
+  .my-rating-review-text {
+    font-size: 12px;
+  }
+}
+
+/* Responsive mobile layout */
+
+@media (max-width: 520px) {
+  .my-rating-main {
+    padding: 25px 13px 38px;
+  }
+
+  .my-rating-heading {
+    margin-bottom: 20px;
+  }
+
+  .my-rating-heading h1 {
+    font-size: 28px;
+  }
+
+  .my-rating-heading p {
+    font-size: 12px;
+  }
+
+  .my-rating-list {
+    gap: 12px;
+  }
+
+  .my-rating-card {
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 11px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .my-rating-restaurant-image {
+    width: 88px;
+    height: 95px;
+    border-radius: 9px;
+  }
+
+  .my-rating-card-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 7px;
+  }
+
+  .my-rating-card-heading h2 {
+    font-size: 13px;
+  }
+
+  .my-rating-score {
+    gap: 4px;
+  }
+
+  .my-rating-star {
+    width: 15px;
+    height: 18px;
+    font-size: 17px;
+  }
+
+  .my-rating-star-empty,
+  .my-rating-star-filled {
+    line-height: 18px;
+  }
+
+  .my-rating-value {
+    font-size: 11px;
+  }
+
+  .my-rating-review-text {
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  .my-rating-actions {
+    gap: 6px;
+    padding-top: 10px;
+  }
+
+  .my-rating-actions button {
+    min-width: 60px;
+    min-height: 31px;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .my-rating-edit-form textarea {
+    min-height: 85px;
+    font-size: 12px;
+  }
+
+  .my-rating-edit-rating {
+    gap: 6px;
+  }
+
+  .my-rating-edit-rating > span {
+    width: 100%;
+  }
+
+  .my-rating-stars-editable .my-rating-star {
+    width: 23px;
+    height: 25px;
+    font-size: 24px;
+    line-height: 25px;
+  }
+
+  .my-rating-empty {
+    padding: 38px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .my-rating-container {
+    animation: none;
+  }
+
+  .my-rating-card,
+  .my-rating-actions button,
+  .my-rating-stars-editable .my-rating-star {
+    transition: none;
+  }
+}
