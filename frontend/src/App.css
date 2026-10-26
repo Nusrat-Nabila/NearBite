@@ -995,3 +995,21 @@
     width: 140px;
   }
 }
+
+/* ---------- restaurant logo beside the name ---------- */
+
+.rest-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.name-logo {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #eadfd3;
+}

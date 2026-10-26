@@ -12,12 +12,7 @@ load_dotenv(BASE_DIR / '.env')
 
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-if not SECRET_KEY:
-    if DEBUG:
-        SECRET_KEY = 'django-insecure-dev-only-key-change-me'
-    else:
-        raise RuntimeError('SECRET_KEY must be set (backend/.env or environment) when DEBUG is False')
+SECRET_KEY = 'django-insecure-@pu8p9c=aaozv!d48!itu19+v89m)w+1s_epz2cwl318z^di=!'
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1','0.0.0.0']
 

@@ -431,6 +431,10 @@ export default function RestaurantDetails({
       city: details.address.city || base.city || "",
       address: details.address.full || "",
       image: cover?.url || base.image || placeholderImage,
+      logo:
+        details.photos.find((photo) => photo.type === "logo")?.url ||
+        base.logo ||
+        "",
       latitude: details.map?.latitude ?? null,
       longitude: details.map?.longitude ?? null,
       isOpenNow: details.status.is_open_now,
@@ -1013,7 +1017,17 @@ export default function RestaurantDetails({
             </div>
 
             <div className="restaurant-details-info">
-              <h1>{restaurant.name}</h1>
+              <div className="restaurant-details-name">
+                {restaurant.logo && (
+                  <img
+                    className="restaurant-details-logo"
+                    src={restaurant.logo}
+                    alt=""
+                  />
+                )}
+
+                <h1>{restaurant.name}</h1>
+              </div>
 
               <p className="restaurant-details-description">
                 {restaurant.description}

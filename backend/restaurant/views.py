@@ -256,7 +256,7 @@ def list_dietary_tag_options(request):
 @permission_classes([AllowAny])
 def list_cuisine_options(request):
     cuisines = Cuisine.objects.all().order_by('name')
-    return Response(CuisineSerializer(cuisines, many=True).data, status=status.HTTP_200_OK)
+    return Response(CuisineSerializer(cuisines, many=True, context={'request': request}).data, status=status.HTTP_200_OK)
 
 
 # List the food categories a restaurant can choose from.

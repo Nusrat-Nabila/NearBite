@@ -118,7 +118,7 @@ def list_cuisine(request):
     if not is_admin(request.user):
         return admin_only_response()
     cuisines = Cuisine.objects.all().order_by('name')
-    serializer = CuisineAdminSerializer(cuisines, many=True)
+    serializer = CuisineAdminSerializer(cuisines, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -128,7 +128,7 @@ def list_cuisine(request):
 def create_cuisine(request):
     if not is_admin(request.user):
         return admin_only_response()
-    serializer = CuisineAdminSerializer(data=request.data)
+    serializer = CuisineAdminSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         serializer.save()
         return Response({"success": True, "data": serializer.data}, status=status.HTTP_201_CREATED)
@@ -142,7 +142,7 @@ def view_cuisine(request, cuisine_id):
     if not is_admin(request.user):
         return admin_only_response()
     cuisine = get_object_or_404(Cuisine, id=cuisine_id)
-    serializer = CuisineAdminSerializer(cuisine)
+    serializer = CuisineAdminSerializer(cuisine, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -153,7 +153,7 @@ def update_cuisine(request, cuisine_id):
     if not is_admin(request.user):
         return admin_only_response()
     cuisine = get_object_or_404(Cuisine, id=cuisine_id)
-    serializer = CuisineAdminSerializer(cuisine, data=request.data, partial=True)
+    serializer = CuisineAdminSerializer(cuisine, data=request.data, partial=True, context={'request': request})
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

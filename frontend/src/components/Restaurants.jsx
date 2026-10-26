@@ -178,7 +178,17 @@ export default function Restaurants({
 
                 <div className="rest-body">
                   <div className="rest-top">
-                    <h4>{restaurant.name}</h4>
+                    <div className="rest-name">
+                      {restaurant.logo && (
+                        <img
+                          className="name-logo"
+                          src={restaurant.logo}
+                          alt=""
+                        />
+                      )}
+
+                      <h4>{restaurant.name}</h4>
+                    </div>
 
                     <span className="star">
                       ★ {restaurant.rating}

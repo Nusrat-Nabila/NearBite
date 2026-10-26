@@ -1,5 +1,10 @@
+import os
+from io import BytesIO
+
+from django.core.files.base import ContentFile
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from PIL import Image, ImageOps
 
 from account.models import Customer, Restaurant
 from account.utils import generate_unique_slug
@@ -26,19 +31,54 @@ class DietaryTag(models.Model):
         return self.name
  
  
+# Every cuisine picture is stored at this size, so they all look the same on the site.
+CUISINE_IMAGE_SIZE = (520, 420)
+
+
 class Cuisine(models.Model):
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
+    image = models.ImageField(upload_to='cuisine/', blank=True, null=True)
 
     # Remember the name the cuisine was loaded with.
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._loaded_name = self.__dict__.get('name')
 
-    # Rebuild the slug when it is missing or the name changed, then save.
+    # Crop and resize the picture to the fixed size, as a JPEG.
+    # A picture that is already that size is left alone.
+    def resize_image(self):
+        try:
+            self.image.open()
+            picture = Image.open(self.image)
+            picture = ImageOps.exif_transpose(picture)
+        except Exception:
+            return  # not a picture Pillow can read: keep it as it is
+
+        if picture.size == CUISINE_IMAGE_SIZE and self.image.name.lower().endswith('.jpg'):
+            return
+
+        if picture.mode in ('RGBA', 'LA', 'P'):
+            picture = picture.convert('RGBA')
+            background = Image.new('RGB', picture.size, (255, 255, 255))
+            background.paste(picture, mask=picture.getchannel('A'))
+            picture = background
+        else:
+            picture = picture.convert('RGB')
+
+        picture = ImageOps.fit(picture, CUISINE_IMAGE_SIZE, Image.LANCZOS)
+
+        buffer = BytesIO()
+        picture.save(buffer, format='JPEG', quality=88)
+        name = os.path.splitext(os.path.basename(self.image.name))[0] + '.jpg'
+        self.image.save(name, ContentFile(buffer.getvalue()), save=False)
+
+    # Rebuild the slug when it is missing or the name changed, resize the picture, then save.
     def save(self, *args, **kwargs):
         if not self.slug or self.name != self._loaded_name:
             self.slug = generate_unique_slug(self, self.name)
+        if self.image:
+            self.resize_image()
         super().save(*args, **kwargs)
         self._loaded_name = self.name
  

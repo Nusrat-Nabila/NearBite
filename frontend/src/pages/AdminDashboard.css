@@ -843,6 +843,13 @@
   color: #fff;
   font-size: 22px;
   font-weight: 850;
+  overflow: hidden;
+}
+
+.admin-modal-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .admin-modal-profile > div:nth-child(2) {
@@ -1406,4 +1413,105 @@
 
 .admin-profile-ok {
   color: #18753b;
+}
+
+/* ---------- cuisine pictures ---------- */
+
+.admin-tag-image-pick,
+.admin-tag-image-change {
+  position: relative;
+  cursor: pointer;
+}
+
+.admin-tag-image-pick {
+  display: inline-flex;
+  align-items: center;
+  max-width: 230px;
+  min-height: 39px;
+  padding: 9px 12px;
+  overflow: hidden;
+  border: 1px dashed #d3c6b6;
+  border-radius: 7px;
+  background: #fff;
+  color: #666;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-tag-image-pick input,
+.admin-tag-image-change input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.admin-tag-thumb {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.admin-tag-thumb-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ecdfd0;
+  color: var(--admin-red);
+  font-weight: 800;
+}
+
+/* ---------- customer pictures (Users tab) ---------- */
+
+.admin-user-picture {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
+.admin-user-picture-empty {
+  background: #a9230c;
+  color: #fff;
+  font-weight: 800;
+}
+
+/* ---------- restaurant logos ---------- */
+
+.admin-recent-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-restaurant-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-restaurant-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-restaurant-logo span {
+  color: #a9230c;
+  font-size: 32px;
+  font-weight: 850;
 }

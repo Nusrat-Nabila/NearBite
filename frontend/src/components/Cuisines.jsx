@@ -34,7 +34,8 @@ export default function Cuisines({ onCuisineSelect }) {
         options.cuisines.map((cuisine) => ({
           name: cuisine.name,
           slug: cuisine.slug,
-          image: pictureFor(cuisine.name),
+          // The picture the admin uploaded, else the built-in one for that name.
+          image: cuisine.image || pictureFor(cuisine.name),
         }))
       );
     });

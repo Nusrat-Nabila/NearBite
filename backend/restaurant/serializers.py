@@ -24,6 +24,7 @@ class CuisineSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'slug',
+            'image',
         ]
         read_only_fields = ['slug']
 

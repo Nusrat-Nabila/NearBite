@@ -40,6 +40,8 @@ export function toRestaurantCard(item) {
     offer: "",
 
     image: item.cover_image || item.logo || placeholderImage,
+    // The small round picture shown beside the name (empty when the restaurant has no logo).
+    logo: item.logo || "",
 
     latitude: item.latitude != null ? Number(item.latitude) : null,
     longitude: item.longitude != null ? Number(item.longitude) : null,

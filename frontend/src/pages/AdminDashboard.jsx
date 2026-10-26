@@ -76,6 +76,7 @@ async function loadUsers() {
     city: customer.customer_city || "",
     area: customer.customer_area || "",
     address: customer.customer_address || "",
+    image: customer.customer_image || "",
     role: "customer",
     // customers sign up without an approval step
     status: "approved",
@@ -136,6 +137,7 @@ async function loadApprovedRestaurants() {
       name: restaurant.name,
       area: restaurant.area || "",
       city: restaurant.city || "",
+      logo: restaurant.logo || "",
       createdAt: restaurant.created_at,
     }))
     .sort(
@@ -179,7 +181,7 @@ async function loadAdminData() {
   };
 }
 
-// Restaurants shown on one page of "Recent Registration".
+// Restaurants shown on one page of "All Restaurants".
 const RECENT_PER_PAGE = 10;
 const FEEDBACK_PER_PAGE = 10;
 
@@ -262,7 +264,7 @@ function StatusBadge({ status = "pending" }) {
 
 const navigation = [
   { id: "dashboard", icon: "▦", title: "Dashboard" },
-  { id: "restaurants", icon: "♙", title: "Restaurants" },
+  { id: "restaurants", icon: "♙", title: "Restaurant Requests" },
   { id: "users", icon: "♧", title: "Users" },
   { id: "dietary", icon: "◇", title: "Dietary Tags" },
   { id: "cuisine", icon: "#", title: "Cuisine Tags" },
@@ -433,13 +435,17 @@ function DetailsModal({
 
         <div className="admin-modal-profile">
           <div className="admin-modal-avatar">
-            {String(
-              isRestaurant
-                ? item.ownerName || item.name || "R"
-                : item.name || "U"
-            )
-              .charAt(0)
-              .toUpperCase()}
+            {!isRestaurant && item.image ? (
+              <img src={item.image} alt="" />
+            ) : (
+              String(
+                isRestaurant
+                  ? item.ownerName || item.name || "R"
+                  : item.name || "U"
+              )
+                .charAt(0)
+                .toUpperCase()
+            )}
           </div>
 
           <div>
@@ -458,7 +464,8 @@ function DetailsModal({
             </p>
           </div>
 
-          <StatusBadge status={item.status} />
+          {/* Customers have no approval step, so only restaurants show a status. */}
+          {isRestaurant && <StatusBadge status={item.status} />}
         </div>
 
         <div className="admin-modal-body">
@@ -654,6 +661,18 @@ function RestaurantViewModal({ restaurant, onClose }) {
 
           {details && (
             <>
+              <div className="admin-restaurant-logo">
+                {restaurant.logo ? (
+                  <img src={restaurant.logo} alt="Restaurant logo" />
+                ) : (
+                  <span aria-hidden="true">
+                    {String(restaurant.name || "R")
+                      .charAt(0)
+                      .toUpperCase()}
+                  </span>
+                )}
+              </div>
+
               <h3>Profile</h3>
 
               <div className="admin-details-grid">
@@ -749,7 +768,7 @@ export default function AdminDashboard({
   // Everything below comes from the backend.
   const [restaurants, setRestaurants] = useState([]);
 
-  // The approved restaurants shown in "Recent Registration": { id, name, area, city, createdAt }
+  // The approved restaurants shown in "All Restaurants": { id, name, area, city, createdAt }
   const [approvedList, setApprovedList] = useState([]);
   const [recentSearch, setRecentSearch] = useState("");
   const [recentPage, setRecentPage] = useState(1);
@@ -787,6 +806,9 @@ export default function AdminDashboard({
   const [loadFailed, setLoadFailed] = useState(false);
 
   const [newTag, setNewTag] = useState("");
+  // The picture picked for a new cuisine (a File), and a key that empties the file box.
+  const [newTagImage, setNewTagImage] = useState(null);
+  const [imageInputKey, setImageInputKey] = useState(0);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -1100,6 +1122,8 @@ export default function AdminDashboard({
     setReviewFilter("all");
     setReviewTypeFilter("all");
     setNewTag("");
+    setNewTagImage(null);
+    setImageInputKey((key) => key + 1);
     setSidebarOpen(false);
     setOpenActionMenu(null);
     setSelectedDetails(null);
@@ -1268,9 +1292,18 @@ export default function AdminDashboard({
       return;
     }
 
+    // A cuisine can come with a picture, so it is sent as a form.
+    let body = { name: value };
+
+    if (type === "cuisine" && newTagImage) {
+      body = new FormData();
+      body.append("name", value);
+      body.append("image", newTagImage);
+    }
+
     const { ok, data } = await apiCall(
       TAG_TYPES[type].create,
-      { method: "POST", body: { name: value } }
+      { method: "POST", body }
     );
 
     if (!ok) {
@@ -1279,6 +1312,8 @@ export default function AdminDashboard({
     }
 
     setNewTag("");
+    setNewTagImage(null);
+    setImageInputKey((key) => key + 1);
 
     await refresh();
     announceTagChange();
@@ -1337,6 +1372,27 @@ export default function AdminDashboard({
     }
 
     setEditingTag(null);
+  };
+
+  // Give a cuisine a new picture.
+  const changeTagImage = async (type, tag, file) => {
+    if (!file) return;
+
+    const body = new FormData();
+    body.append("image", file);
+
+    const { ok, data } = await apiCall(
+      TAG_TYPES[type].update(tag.id),
+      { method: "PUT", body }
+    );
+
+    if (!ok) {
+      window.alert(errorMessage(data));
+      return;
+    }
+
+    await refresh();
+    announceTagChange();
   };
 
   /* ================= MY PROFILE: SAVE ================= */
@@ -1555,7 +1611,7 @@ export default function AdminDashboard({
         </div>
 
         <section className="admin-beige-panel admin-recent-panel">
-          <h2>Recent Registration</h2>
+          <h2>All Restaurants</h2>
 
           <input
             type="search"
@@ -1575,10 +1631,29 @@ export default function AdminDashboard({
                 className="admin-recent-row"
                 key={item.id}
               >
-                <div>
-                  <strong>{item.name}</strong>
+                <div className="admin-recent-name">
+                  {item.logo ? (
+                    <img
+                      className="admin-user-picture"
+                      src={item.logo}
+                      alt=""
+                    />
+                  ) : (
+                    <span
+                      className="admin-user-picture admin-user-picture-empty"
+                      aria-hidden="true"
+                    >
+                      {String(item.name || "R")
+                        .charAt(0)
+                        .toUpperCase()}
+                    </span>
+                  )}
 
-                  {item.area && <span> ({item.area})</span>}
+                  <div>
+                    <strong>{item.name}</strong>
+
+                    {item.area && <span> ({item.area})</span>}
+                  </div>
                 </div>
 
                 <button
@@ -1664,7 +1739,7 @@ export default function AdminDashboard({
   const renderRestaurants = () => (
     <>
       <div className="admin-heading">
-        <h1>Restaurants</h1>
+        <h1>Restaurant Requests</h1>
         <p>
           Review restaurant registrations and manage
           approvals
@@ -1764,6 +1839,7 @@ export default function AdminDashboard({
           <table className="admin-table admin-management-table">
             <thead>
               <tr>
+                <th>Picture</th>
                 <th>User</th>
                 <th>Email</th>
                 <th>Actions</th>
@@ -1773,6 +1849,25 @@ export default function AdminDashboard({
             <tbody>
               {filteredUsers.map((item) => (
                 <tr key={item.id}>
+                  <td>
+                    {item.image ? (
+                      <img
+                        className="admin-user-picture"
+                        src={item.image}
+                        alt=""
+                      />
+                    ) : (
+                      <span
+                        className="admin-user-picture admin-user-picture-empty"
+                        aria-hidden="true"
+                      >
+                        {String(item.name || "U")
+                          .charAt(0)
+                          .toUpperCase()}
+                      </span>
+                    )}
+                  </td>
+
                   <td>
                     <strong>{item.name}</strong>
                   </td>
@@ -1788,7 +1883,7 @@ export default function AdminDashboard({
               {!filteredUsers.length && (
                 <tr>
                   <td
-                    colSpan={3}
+                    colSpan={4}
                     className="admin-table-empty"
                   >
                     No users found.
@@ -1835,6 +1930,22 @@ export default function AdminDashboard({
               }
               maxLength={50}
             />
+
+            {type === "cuisine" && (
+              <label className="admin-tag-image-pick">
+                {newTagImage
+                  ? newTagImage.name
+                  : "Choose picture (optional)"}
+                <input
+                  key={imageInputKey}
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) =>
+                    setNewTagImage(event.target.files[0] ?? null)
+                  }
+                />
+              </label>
+            )}
 
             <button type="submit">
               + Add Tag
@@ -1890,7 +2001,47 @@ export default function AdminDashboard({
                   </>
                 ) : (
                   <>
+                    {type === "cuisine" && (
+                      <>
+                        {tag.image ? (
+                          <img
+                            className="admin-tag-thumb"
+                            src={tag.image}
+                            alt=""
+                          />
+                        ) : (
+                          <span
+                            className="admin-tag-thumb admin-tag-thumb-empty"
+                            aria-hidden="true"
+                          >
+                            {tag.name.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </>
+                    )}
+
                     <span>{tag.name}</span>
+
+                    {type === "cuisine" && (
+                      <label
+                        className="admin-tag-image-change"
+                        title={`Change picture of ${tag.name}`}
+                      >
+                        🖼
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) => {
+                            changeTagImage(
+                              type,
+                              tag,
+                              event.target.files[0]
+                            );
+                            event.target.value = "";
+                          }}
+                        />
+                      </label>
+                    )}
 
                     <button
                       type="button"

@@ -16,7 +16,7 @@ from account.views import (
 from adminpanel.models import RestaurantReport
 from restaurant.models import RATING_VALUES, rating_key, Cuisine, FoodCategory, DietaryTag, DishReview, MenuCategory, MenuItem, Review, RestaurantMealType, RestaurantOccasion
 from restaurant.moderation import has_bad_language, send_review_removed_email
-from restaurant.serializers import DietaryTagSerializer
+from restaurant.serializers import CuisineSerializer, DietaryTagSerializer
 from restaurant.views import (
     add_dining_info, add_dish_rating_summary, add_menu_tags, add_open_now, add_rating_summary, client_ip, dish_context, error_response,
     hide_private, is_open_at, load_hours, restaurant_status, weekly_schedule,
@@ -193,7 +193,7 @@ def search_restaurant(request):
 @permission_classes([AllowAny])
 def list_filter_options(request):
     return Response({
-        "cuisines": DietaryTagSerializer(Cuisine.objects.order_by('name'), many=True).data,
+        "cuisines": CuisineSerializer(Cuisine.objects.order_by('name'), many=True, context={'request': request}).data,
         "categories": DietaryTagSerializer(FoodCategory.objects.order_by('name'), many=True).data,
         "dietary_tags": DietaryTagSerializer(DietaryTag.objects.order_by('name'), many=True).data,
         "meal_types": [{"value": v, "label": l} for v, l in RestaurantMealType.MEAL_CHOICES],
