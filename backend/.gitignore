@@ -130,7 +130,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+
 .venv
 env/
 venv/
@@ -171,12 +171,4 @@ cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
 
-# NearBite: local data that must never be committed
-# (the database holds every account, including passwords; media holds uploaded photos)
-*.sqlite3
-*.sqlite3-journal
-db.sqlite3
-media/
 
-# Backups of the database (they hold real accounts and passwords)
-*.sqlite3.*
