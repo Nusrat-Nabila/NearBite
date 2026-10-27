@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://nabila254.pythonanywhere.com/api/:path*" },
+    { "source": "/media/:path*", "destination": "https://nabila254.pythonanywhere.com/media/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
