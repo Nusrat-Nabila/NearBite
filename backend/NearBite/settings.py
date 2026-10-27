@@ -14,7 +14,7 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
 SECRET_KEY = 'django-insecure-@pu8p9c=aaozv!d48!itu19+v89m)w+1s_epz2cwl318z^di=!'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'nafisa253.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'nafisa253.pythonanywhere.com','nabila254.pythonanywhere.com']
 
 
 INSTALLED_APPS = [
@@ -107,10 +107,10 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR/'static',]
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 PRIVATE_MEDIA_ROOT = os.path.join(BASE_DIR, 'private_media')
 
