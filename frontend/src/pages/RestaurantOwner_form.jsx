@@ -30,6 +30,15 @@ const cities = {
   Rajshahi: ["Shaheb Bazar", "Uposhahar", "Kazla", "Motihar"],
 };
 
+const documentFields = [
+  { name: "tin_certificate", label: "TIN Certificate" },
+  { name: "vat_certificate", label: "VAT Certificate" },
+  { name: "trade_license", label: "Trade License" },
+  { name: "restaurant_license", label: "Restaurant License" },
+];
+
+const MAX_DOCUMENT_MB = 2;
+
 export default function RestaurantOwner_form({
   onBack,
   onLoginClick,
@@ -46,6 +55,7 @@ export default function RestaurantOwner_form({
     confirmPassword: "",
   });
 
+  const [documents, setDocuments] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
@@ -61,6 +71,21 @@ export default function RestaurantOwner_form({
       ...(name === "city" ? { area: "" } : {}),
     }));
 
+    setError("");
+    setSuccess("");
+  };
+
+  const pickDocument = (e) => {
+    const { name, files } = e.target;
+    const file = files[0];
+
+    if (file && file.size > MAX_DOCUMENT_MB * 1024 * 1024) {
+      setError(`Each document must be ${MAX_DOCUMENT_MB} MB or smaller.`);
+      e.target.value = "";
+      return;
+    }
+
+    setDocuments((prev) => ({ ...prev, [name]: file || null }));
     setError("");
     setSuccess("");
   };
@@ -82,22 +107,29 @@ export default function RestaurantOwner_form({
       return;
     }
 
+    if (documentFields.some(({ name }) => !documents[name])) {
+      setError("Please upload all four documents as PDF files.");
+      return;
+    }
+
     setIsSubmitting(true);
+
+    const body = new FormData();
+    body.append("restaurant_name", form.restaurantName.trim());
+    body.append("restaurant_email", form.email.trim());
+    body.append("restaurant_phone", form.number.trim());
+    body.append("restaurant_city", form.city);
+    body.append("restaurant_area", form.area);
+    body.append("restaurant_location", form.address.trim());
+    body.append("restaurant_business_reg_id", form.registrationNo.trim());
+    body.append("restaurant_password", form.password);
+    body.append("confirm_password", form.confirmPassword);
+    documentFields.forEach(({ name }) => body.append(name, documents[name]));
 
     const { ok, data } = await apiCall("/api/restaurant_request_signup/", {
       method: "POST",
       auth: false,
-      body: {
-        restaurant_name: form.restaurantName.trim(),
-        restaurant_email: form.email.trim(),
-        restaurant_phone: form.number.trim(),
-        restaurant_city: form.city,
-        restaurant_area: form.area,
-        restaurant_location: form.address.trim(),
-        restaurant_business_reg_id: form.registrationNo.trim(),
-        restaurant_password: form.password,
-        confirm_password: form.confirmPassword,
-      },
+      body,
     });
 
     setIsSubmitting(false);
@@ -118,6 +150,8 @@ export default function RestaurantOwner_form({
       password: "",
       confirmPassword: "",
     });
+    setDocuments({});
+    e.target.reset?.();
 
     setSuccess(
       data?.message || "Request submitted. Awaiting admin approval."
@@ -315,6 +349,22 @@ export default function RestaurantOwner_form({
               />
             </div>
           </div>
+
+          {documentFields.map(({ name, label }) => (
+            <div className="owner-field" key={name}>
+              <label htmlFor={`owner-${name}`}>{label} (PDF)</label>
+              <div className="owner-input-wrap">
+                <input
+                  id={`owner-${name}`}
+                  name={name}
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  onChange={pickDocument}
+                  required
+                />
+              </div>
+            </div>
+          ))}
 
           <div className="owner-field">
             <label htmlFor="owner-password">Password</label>

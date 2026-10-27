@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import logoIcon from "../Image/logo.png";
 import { apiCall, errorMessage, mapBackendUser, saveUser } from "../api";
+import RestaurantDocuments from "../components/RestaurantDocuments";
+import { openDocument } from "../openDocument";
 import "./AdminDashboard.css";
 
 /* ================= LOADING FROM THE BACKEND ================= */
@@ -56,6 +58,7 @@ async function loadRestaurants() {
     area: request.restaurant_area || "",
     address: request.restaurant_location || "",
     declineReason: request.decline_reason || "",
+    documents: request.documents || {},
     // the backend says "declined", this page says "rejected"
     status:
       request.status === "declined" ? "rejected" : request.status,
@@ -78,6 +81,10 @@ async function loadUsers() {
     address: customer.customer_address || "",
     image: customer.customer_image || "",
     role: "customer",
+    accountId: customer.id,
+    accountStatus: customer.account_status || "active",
+    scheduledDeletionAt: customer.scheduled_deletion_at || "",
+    statusReason: customer.status_reason || "",
     // customers sign up without an approval step
     status: "approved",
     createdAt: customer.created_at,
@@ -127,13 +134,16 @@ async function loadReviews() {
 
 // The approved restaurants (the ones that exist), newest first.
 async function loadApprovedRestaurants() {
-  const rows = await fetchAll("/api/list_restaurant/");
+  const rows = await fetchAll("/api/admin_list_restaurant/");
 
   if (!rows) return null;
 
   return rows
     .map((restaurant) => ({
       id: restaurant.id,
+      email: restaurant.email || "",
+      accountStatus: restaurant.account_status || "active",
+      scheduledDeletionAt: restaurant.scheduled_deletion_at || "",
       name: restaurant.name,
       area: restaurant.area || "",
       city: restaurant.city || "",
@@ -170,9 +180,30 @@ async function loadAdminData() {
     fetchList("/api/list_food_category/"),
   ]);
 
+  // An approved registration belongs to the restaurant with the same email: that is
+  // the account the admin can suspend or disable.
+  const accounts = new Map(
+    (approvedList || []).map((restaurant) => [restaurant.email, restaurant])
+  );
+
+  const registrations = restaurants
+    ? restaurants.map((request) => {
+        const account =
+          request.status === "approved" && accounts.get(request.email);
+
+        return account
+          ? {
+              ...request,
+              accountId: account.id,
+              accountStatus: account.accountStatus,
+            }
+          : request;
+      })
+    : restaurants;
+
   return {
     approvedList,
-    restaurants,
+    restaurants: registrations,
     users,
     reports,
     reviews,
@@ -275,11 +306,64 @@ const navigation = [
 
 /* ================= DETAILS MODAL ================= */
 
+const DOCUMENT_LABELS = {
+  tin_certificate: "TIN Certificate",
+  vat_certificate: "VAT Certificate",
+  trade_license: "Trade License",
+  restaurant_license: "Restaurant License",
+};
+
+// The account status and the buttons that suspend, activate or delete the account.
+function AccountStatusButtons({ item, onChange }) {
+  if (!onChange || item.accountStatus === undefined) return null;
+
+  const deleting = Boolean(item.scheduledDeletionAt);
+
+  return (
+    <>
+      <span className={`admin-account-status admin-account-${item.accountStatus}`}>
+        {deleting
+          ? `${item.accountStatus === "pending_deletion" ? "Deleted by user" : "Suspended"}, deleted on ${new Date(item.scheduledDeletionAt).toLocaleDateString()}`
+          : `Account: ${formatLabel(item.accountStatus)}`}
+      </span>
+
+      {item.accountStatus === "active" ? (
+        <button
+          type="button"
+          className="admin-action-reject"
+          onClick={() => onChange("suspended")}
+        >
+          Suspend
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="admin-action-approve"
+          onClick={() => onChange("active")}
+        >
+          {deleting ? "Activate (cancel deletion)" : "Activate"}
+        </button>
+      )}
+
+      {!deleting && (
+        <button
+          type="button"
+          className="admin-action-reject"
+          onClick={() => onChange("deleted")}
+        >
+          Delete
+        </button>
+      )}
+    </>
+  );
+}
+
 function DetailsModal({
   item,
   type,
   onClose,
   onStatusChange,
+  onAccountStatus,
   canChangeStatus = false,
 }) {
   const isRestaurant = type === "restaurant";
@@ -486,6 +570,32 @@ function DetailsModal({
             </p>
           )}
 
+          {isRestaurant && (
+            <>
+              <h3>Documents</h3>
+
+              <div className="admin-details-grid">
+                {Object.entries(DOCUMENT_LABELS).map(([kind, label]) => (
+                  <div className="admin-detail-field" key={kind}>
+                    <span>{label}</span>
+
+                    {item.documents?.[kind] ? (
+                      <button
+                        type="button"
+                        className="admin-view-button"
+                        onClick={() => openDocument(item.documents[kind])}
+                      >
+                        View PDF
+                      </button>
+                    ) : (
+                      <strong>Not uploaded</strong>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
           <p className="admin-modal-note">
             Only available registration information is
             displayed. Passwords and other credentials
@@ -494,6 +604,13 @@ function DetailsModal({
         </div>
 
         <div className="admin-modal-footer">
+          {!isRestaurant && (
+            <AccountStatusButtons
+              item={item}
+              onChange={onAccountStatus}
+            />
+          )}
+
           <button
             type="button"
             className="admin-modal-cancel"
@@ -530,7 +647,7 @@ function DetailsModal({
 
 /* ================= RESTAURANT PROFILE AND MENU POPUP ================= */
 
-function RestaurantViewModal({ restaurant, onClose }) {
+function RestaurantViewModal({ restaurant, onClose, onAccountStatus }) {
   // { id, details, menu } of the restaurant that was loaded last
   const [loaded, setLoaded] = useState({ id: null });
 
@@ -659,6 +776,10 @@ function RestaurantViewModal({ restaurant, onClose }) {
             </p>
           )}
 
+          {!isLoading && !details && (
+            <RestaurantDocuments restaurantId={restaurant.id} />
+          )}
+
           {details && (
             <>
               <div className="admin-restaurant-logo">
@@ -689,6 +810,8 @@ function RestaurantViewModal({ restaurant, onClose }) {
                   {details.description}
                 </p>
               )}
+
+              <RestaurantDocuments restaurantId={restaurant.id} />
 
               <h3 className="admin-menu-heading">Menu</h3>
 
@@ -740,6 +863,11 @@ function RestaurantViewModal({ restaurant, onClose }) {
         </div>
 
         <div className="admin-modal-footer">
+          <AccountStatusButtons
+            item={restaurant}
+            onChange={onAccountStatus}
+          />
+
           <button
             type="button"
             className="admin-modal-cancel"
@@ -1168,20 +1296,154 @@ export default function AdminDashboard({
     refresh();
   };
 
+  // Schedule a customer or restaurant account for deletion in 30 days. The email text is the
+  // reason they are sent; the account is suspended until then and can still be activated.
+  const deleteAccount = async (item, type) => {
+    const name = item.name || "this account";
+
+    const reason = window.prompt(
+      `Write the email to ${name}. This is the reason they will be sent for the account being DELETED. It is suspended now and permanently deleted in 30 days:`
+    );
+
+    if (!reason || !reason.trim()) return;
+
+    const typed = window.prompt(
+      `The account will be suspended now and permanently deleted in 30 days.\nTo confirm, type the name exactly:\n${name}`
+    );
+
+    if (typed === null) return;
+
+    if (typed.trim().toLowerCase() !== name.trim().toLowerCase()) {
+      window.alert("The name did not match, so nothing was changed.");
+      return;
+    }
+
+    const { ok, data } = await apiCall(
+      `/api/admin_delete_account/${type === "restaurant" ? "restaurant" : "customer"}/${item.accountId}/`,
+      { method: "POST", body: { reason: reason.trim() } }
+    );
+
+    if (!ok) {
+      window.alert(errorMessage(data));
+      return;
+    }
+
+    window.alert(
+      "The account is suspended and will be deleted in 30 days. The user was emailed. You can activate it before then to cancel."
+    );
+
+    refresh();
+  };
+
+  // Suspend or re-activate a customer or restaurant account.
+  // Suspending needs the email text (the reason) that is sent to the account holder;
+  // activating asks the admin to confirm twice. The backend sends the email.
+  const changeAccountStatus = async (item, type, newStatus) => {
+    const name = item.name || "this account";
+    const body = { status: newStatus };
+
+    if (newStatus === "deleted") {
+      deleteAccount(item, type);
+      return;
+    }
+
+    if (newStatus === "active") {
+      const summary = [
+        `You are about to ACTIVATE this ${type === "restaurant" ? "restaurant" : "customer"}:`,
+        ``,
+        `Name: ${name}`,
+        `Email: ${item.email || "-"}`,
+        `Current status: ${item.accountStatus}`,
+        ``,
+        item.scheduledDeletionAt
+          ? `This account is waiting to be deleted. Activating it cancels the deletion.`
+          : `Did they reply to the ${item.accountStatus} email, and did you check their reply?`,
+        `They will be emailed that the account is active again.`,
+      ].join("\n");
+
+      if (!window.confirm(summary)) return;
+
+      const typed = window.prompt(
+        `To confirm, type the name exactly:\n${name}`
+      );
+
+      if (typed === null) return;
+
+      if (typed.trim().toLowerCase() !== name.trim().toLowerCase()) {
+        window.alert("The name did not match, so nothing was changed.");
+        return;
+      }
+    } else {
+      const reason = window.prompt(
+        `Write the email to ${name}. This is the reason they will be sent for the account being suspended. It will not be reactivated automatically; only you can reactivate it:`
+      );
+
+      if (!reason || !reason.trim()) return;
+
+      body.reason = reason.trim();
+    }
+
+    const { ok, data } = await apiCall(
+      `/api/set_account_status/${type === "restaurant" ? "restaurant" : "customer"}/${item.accountId}/`,
+      { method: "POST", body }
+    );
+
+    if (!ok) {
+      window.alert(errorMessage(data));
+      return;
+    }
+
+    window.alert(
+      newStatus === "active"
+        ? "The account is active again and the user was emailed."
+        : `The account is now ${newStatus} and the user was emailed.`
+    );
+
+    refresh();
+  };
+
   const changeItemStatus = (item, type, status) => {
     // Customers are not approved or rejected.
     if (type !== "restaurant") return;
 
-    const action =
-      status === "approved" ? "approve" : "reject";
+    const name = item.name || "this restaurant";
 
-    const confirmed = window.confirm(
-      `Are you sure you want to ${action} ${
-        item.name || "this restaurant"
-      }?`
+    if (status !== "approved") {
+      if (!window.confirm(`Are you sure you want to reject ${name}?`)) return;
+
+      updateRestaurantStatus(item, status);
+      return;
+    }
+
+    // Approving cannot be undone, so the admin is asked twice.
+    const uploaded = Object.keys(item.documents || {}).length;
+
+    const summary = [
+      `You are about to APPROVE this restaurant:`,
+      ``,
+      `Restaurant: ${name}`,
+      `Owner: ${item.ownerName || "-"}`,
+      `Email: ${item.email || "-"}`,
+      `Documents uploaded: ${uploaded} of 4`,
+      ``,
+      uploaded < 4
+        ? "Some documents are missing. Have you checked them?"
+        : "Have you opened and checked all 4 documents?",
+      `Approving cannot be undone.`,
+    ].join("\n");
+
+    if (!window.confirm(summary)) return;
+
+    const typed = window.prompt(
+      `To confirm, type the restaurant name exactly:\n${name}`
     );
 
-    if (!confirmed) return;
+    if (typed === null) return;
+
+    if (typed.trim().toLowerCase() !== name.trim().toLowerCase()) {
+      window.alert("The name did not match, so nothing was approved.");
+      return;
+    }
 
     updateRestaurantStatus(item, status);
   };
@@ -1233,33 +1495,29 @@ export default function AdminDashboard({
 
             {isOpen && (
               <div className="admin-more-menu">
-                <button
-                  type="button"
-                  className="admin-more-approve"
-                  onClick={() =>
-                    changeItemStatus(
-                      item,
-                      type,
-                      "approved"
-                    )
-                  }
-                >
-                  ✓ Approve
-                </button>
+                {canDecide && (
+                  <button
+                    type="button"
+                    className="admin-more-approve"
+                    onClick={() =>
+                      changeItemStatus(item, type, "approved")
+                    }
+                  >
+                    ✓ Approve
+                  </button>
+                )}
 
-                <button
-                  type="button"
-                  className="admin-more-reject"
-                  onClick={() =>
-                    changeItemStatus(
-                      item,
-                      type,
-                      "rejected"
-                    )
-                  }
-                >
-                  ✕ Reject
-                </button>
+                {canDecide && (
+                  <button
+                    type="button"
+                    className="admin-more-reject"
+                    onClick={() =>
+                      changeItemStatus(item, type, "rejected")
+                    }
+                  >
+                    ✕ Reject
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -2813,8 +3071,22 @@ export default function AdminDashboard({
 
       {viewRestaurant && (
         <RestaurantViewModal
-          restaurant={viewRestaurant}
+          restaurant={
+            approvedList.find((item) => item.id === viewRestaurant.id) ||
+            viewRestaurant
+          }
           onClose={() => setViewRestaurant(null)}
+          onAccountStatus={(status) => {
+            const current =
+              approvedList.find((item) => item.id === viewRestaurant.id) ||
+              viewRestaurant;
+
+            changeAccountStatus(
+              { ...current, accountId: current.id },
+              "restaurant",
+              status
+            );
+          }}
         />
       )}
 
@@ -2834,6 +3106,13 @@ export default function AdminDashboard({
             }
             onStatusChange={(status) =>
               changeItemStatus(
+                latestSelectedItem,
+                selectedDetails.type,
+                status
+              )
+            }
+            onAccountStatus={(status) =>
+              changeAccountStatus(
                 latestSelectedItem,
                 selectedDetails.type,
                 status

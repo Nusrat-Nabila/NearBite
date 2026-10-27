@@ -1,5 +1,31 @@
+from django.core.validators import FileExtensionValidator
 from rest_framework import serializers
-from .models import Customer, Restaurant, Admin, RestaurantRequest
+from rest_framework.reverse import reverse
+from .models import Customer, Restaurant, Admin, RestaurantRequest, DOCUMENT_FIELDS
+
+MAX_DOCUMENT_BYTES = 2 * 1024 * 1024
+
+
+# Make sure an uploaded document is a real PDF that is not too big.
+def validate_pdf(upload):
+    if upload.size > MAX_DOCUMENT_BYTES:
+        raise serializers.ValidationError("Each document must be 2 MB or smaller.")
+    head = upload.read(5)
+    upload.seek(0)
+    if head != b'%PDF-':
+        raise serializers.ValidationError("Upload a valid PDF file.")
+
+
+# Build a required PDF upload field for the signup form.
+def pdf_field():
+    return serializers.FileField(write_only=True, validators=[FileExtensionValidator(['pdf']), validate_pdf])
+
+
+class RestaurantDocumentUploadSerializer(serializers.Serializer):
+    tin_certificate = serializers.FileField(required=False, validators=[FileExtensionValidator(['pdf']), validate_pdf])
+    vat_certificate = serializers.FileField(required=False, validators=[FileExtensionValidator(['pdf']), validate_pdf])
+    trade_license = serializers.FileField(required=False, validators=[FileExtensionValidator(['pdf']), validate_pdf])
+    restaurant_license = serializers.FileField(required=False, validators=[FileExtensionValidator(['pdf']), validate_pdf])
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -20,10 +46,13 @@ class CustomerSerializer(serializers.ModelSerializer):
             'customer_password',
             'confirm_password',
             'customer_role',
+            'account_status',
+            'status_reason',
+            'scheduled_deletion_at',
             'created_at',
             'updated_at',
         ]
-        read_only_fields = ['customer_role', 'created_at', 'updated_at']
+        read_only_fields = ['customer_role', 'account_status', 'status_reason', 'scheduled_deletion_at', 'created_at', 'updated_at']
         extra_kwargs = {
             'customer_email': {'required': True, 'allow_null': False},
             'customer_password': {'write_only': True, 'required': True, 'allow_null': False, 'allow_blank': False},
@@ -64,11 +93,13 @@ class RestaurantSerializer(serializers.ModelSerializer):
             'cover_image',
             'password',
             'is_temporarily_closed',
+            'account_status',
+            'scheduled_deletion_at',
             'created_at',
             'updated_at',
             'slug',
         ]
-        read_only_fields = ['slug', 'created_at', 'updated_at']
+        read_only_fields = ['slug', 'account_status', 'scheduled_deletion_at', 'created_at', 'updated_at']
         extra_kwargs = {
             'email': {'required': True, 'allow_null': False},
             'password': {'write_only': True, 'required': True, 'allow_null': False, 'allow_blank': False},
@@ -108,6 +139,11 @@ class AdminSerializer(serializers.ModelSerializer):
 class RestaurantRequestSerializer(serializers.ModelSerializer):
 
     confirm_password = serializers.CharField(write_only=True)
+    tin_certificate = pdf_field()
+    vat_certificate = pdf_field()
+    trade_license = pdf_field()
+    restaurant_license = pdf_field()
+    documents = serializers.SerializerMethodField()
 
     class Meta:
         model = RestaurantRequest
@@ -123,6 +159,8 @@ class RestaurantRequestSerializer(serializers.ModelSerializer):
             'restaurant_location',
             'restaurant_password',
             'confirm_password',
+            *DOCUMENT_FIELDS,
+            'documents',
             'status',
             'decline_reason',
             'created_at',
@@ -133,6 +171,15 @@ class RestaurantRequestSerializer(serializers.ModelSerializer):
             'restaurant_email': {'required': True, 'allow_null': False},
             'restaurant_password': {'write_only': True, 'required': True, 'allow_null': False, 'allow_blank': False},
         }
+
+    # Give the admin the private links of the uploaded documents.
+    def get_documents(self, obj):
+        request = self.context.get('request')
+        links = {}
+        for kind in DOCUMENT_FIELDS:
+            if getattr(obj, kind):
+                links[kind] = reverse('request_document', args=[obj.id, kind], request=request)
+        return links
 
     # Make sure the restaurant email is not already in use.
     def validate_restaurant_email(self, value):

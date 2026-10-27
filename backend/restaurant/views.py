@@ -13,7 +13,7 @@ from django.utils import timezone
 from account.models import Restaurant
 from account.pagination import paginated_response
 from account.serializers import RestaurantSerializer
-from account.views import is_owner, not_authorized_response, sync_user_auth, delete_user_auth
+from account.views import is_owner, not_authorized_response, sync_user_auth, delete_user_auth, schedule_self_deletion
 from customer import geo
 from .deals import STATUSES, best_item_deals, status_filter
 from .models import (
@@ -173,7 +173,7 @@ def add_dining_info(items):
 @authentication_classes([])  
 @permission_classes([AllowAny])
 def list_restaurant(request):
-    restaurants = Restaurant.objects.all().order_by('name', 'id')
+    restaurants = Restaurant.objects.filter(account_status='active').order_by('name', 'id')
 
     # Turn restaurants into serialized items.
     def to_items(rows):
@@ -188,7 +188,7 @@ def list_restaurant(request):
 @authentication_classes([])   
 @permission_classes([AllowAny])
 def view_restaurant_profile(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
     serializer = RestaurantSerializer(restaurant, context={'request': request})
     items = hide_private(add_dining_info(add_menu_tags(add_rating_summary([dict(serializer.data)]))))
     hours = load_hours([restaurant.id])
@@ -216,7 +216,7 @@ def update_restaurant_profile(request, restaurant_id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Delete a restaurant account.
+# Ask to delete a restaurant account: it is deleted after 30 days unless the owner logs in again.
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_restaurant(request, restaurant_id):
@@ -224,9 +224,7 @@ def delete_restaurant(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     if not is_owner(user, "restaurant", restaurant.email):
         return not_authorized_response()
-    delete_user_auth(restaurant.email, "restaurant")
-    restaurant.delete()
-    return Response({"message": "Restaurant deleted successfully"}, status=status.HTTP_200_OK)
+    return schedule_self_deletion(request, restaurant, "restaurant")
 
 
 # Get the restaurant of the logged-in owner.
@@ -522,7 +520,7 @@ def update_opening_hours(request):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def view_opening_hours(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
     return Response(weekly_schedule(restaurant), status=status.HTTP_200_OK)
 
 
@@ -601,7 +599,7 @@ def list_daily_deals(request):
         limit = int(raw)
 
     offers = (
-        DailyDeals.objects.filter(status_filter('active', timezone.localdate()), restaurant__is_temporarily_closed=False)
+        DailyDeals.objects.filter(status_filter('active', timezone.localdate()), restaurant__is_temporarily_closed=False, restaurant__account_status='active')
         .select_related('restaurant')
         .prefetch_related('menu_items')
         .order_by(F('discount_percentage').desc(nulls_last=True), '-created_at', '-id')
@@ -624,7 +622,7 @@ def list_daily_deals(request):
 def view_offer(request, offer_id):
     today = timezone.localdate()
     offer = (
-        DailyDeals.objects.filter(status_filter('active', today), restaurant__is_temporarily_closed=False, id=offer_id)
+        DailyDeals.objects.filter(status_filter('active', today), restaurant__is_temporarily_closed=False, restaurant__account_status='active', id=offer_id)
         .select_related('restaurant')
         .prefetch_related('menu_items')
         .first()
@@ -724,7 +722,7 @@ def locate_my_restaurant(request):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def view_restaurant_menu(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
     categories = MenuCategory.objects.filter(restaurant=restaurant).order_by(F('display_order').asc(nulls_last=True), 'name')
     items = list(MenuItem.objects.filter(restaurant=restaurant).prefetch_related('dietary_tags', 'cuisines', 'food_categories').order_by('name'))
 

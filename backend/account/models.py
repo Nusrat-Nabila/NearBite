@@ -1,6 +1,32 @@
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.core.validators import FileExtensionValidator
 from django.db import models
 
 from account.utils import generate_unique_slug
+
+ACCOUNT_STATUS_CHOICES = (
+    ('active', 'Active'),
+    ('suspended', 'Suspended'),
+    ('disabled', 'Disabled'),
+    ('pending_deletion', 'Pending deletion'),
+)
+
+# Legal documents live outside MEDIA_ROOT so they are never served as public files.
+private_storage = FileSystemStorage(location=settings.PRIVATE_MEDIA_ROOT)
+
+DOCUMENT_FIELDS = ('tin_certificate', 'vat_certificate', 'trade_license', 'restaurant_license')
+
+
+# Build a PDF upload field for one of the restaurant's legal documents.
+def document_field():
+    return models.FileField(
+        upload_to='documents/',
+        storage=private_storage,
+        validators=[FileExtensionValidator(['pdf'])],
+        blank=True,
+        null=True,
+    )
 
 class Customer(models.Model):
     customer_name = models.CharField(max_length=100)
@@ -12,6 +38,9 @@ class Customer(models.Model):
     customer_image = models.ImageField(upload_to='image/', blank=True, null=True)
     customer_password = models.CharField(max_length=200, blank=True, null=True)
     customer_role = models.CharField(max_length=20, default='customer')
+    account_status = models.CharField(max_length=20, choices=ACCOUNT_STATUS_CHOICES, default='active')
+    status_reason = models.TextField(blank=True, null=True)
+    scheduled_deletion_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
  
@@ -37,6 +66,13 @@ class Restaurant(models.Model):
     cover_image = models.ImageField(upload_to='image/', blank=True, null=True)
     password = models.CharField(max_length=200, blank=True, null=True)
     is_temporarily_closed = models.BooleanField(default=False)
+    account_status = models.CharField(max_length=20, choices=ACCOUNT_STATUS_CHOICES, default='active')
+    status_reason = models.TextField(blank=True, null=True)
+    scheduled_deletion_at = models.DateTimeField(blank=True, null=True)
+    tin_certificate = document_field()
+    vat_certificate = document_field()
+    trade_license = document_field()
+    restaurant_license = document_field()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
@@ -120,6 +156,10 @@ class RestaurantRequest(models.Model):
     restaurant_area = models.CharField(max_length=100, blank=True, null=True)
     restaurant_location = models.CharField(max_length=200, blank=True, null=True)
     restaurant_password = models.CharField(max_length=200, blank=True, null=True)
+    tin_certificate = document_field()
+    vat_certificate = document_field()
+    trade_license = document_field()
+    restaurant_license = document_field()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     decline_reason = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

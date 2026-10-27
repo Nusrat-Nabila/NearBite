@@ -11,7 +11,7 @@ from account.pagination import paginated_response
 from account.serializers import CustomerSerializer, RestaurantSerializer
 from account.views import (
     is_admin, is_owner, admin_only_response, not_authorized_response,
-    sync_user_auth, delete_user_auth,
+    sync_user_auth, delete_user_auth, schedule_self_deletion,
 )
 from adminpanel.models import RestaurantReport
 from restaurant.models import RATING_VALUES, rating_key, Cuisine, FoodCategory, DietaryTag, DishReview, MenuCategory, MenuItem, Review, RestaurantMealType, RestaurantOccasion
@@ -86,7 +86,7 @@ def update_customer_profile(request, customer_id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Delete a customer account.
+# Ask to delete a customer account: it is deleted after 30 days unless the customer logs in again.
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_customer(request, customer_id):
@@ -94,9 +94,7 @@ def delete_customer(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     if not is_owner(user, "customer", customer.customer_email):
         return not_authorized_response()
-    delete_user_auth(customer.customer_email, "customer")
-    customer.delete()
-    return Response({"message": "Customer deleted successfully"}, status=status.HTTP_200_OK)
+    return schedule_self_deletion(request, customer, "customer")
 
 
 # Find a place for a visitor or return an error response.
@@ -269,7 +267,7 @@ def restaurant_cards(restaurants, request):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def view_restaurant_details(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
 
     now = timezone.localtime()
     hours = load_hours([restaurant.id])
@@ -316,7 +314,7 @@ def view_restaurant_details(request, restaurant_id):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def browse_menu(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
     try:
         wanted = restaurant_page.parse_menu_filters(request.query_params)
     except restaurant_page.MenuFilterError as error:
@@ -382,7 +380,7 @@ def browse_menu(request, restaurant_id):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def view_dish(request, item_id):
-    dish = get_object_or_404(MenuItem.objects.select_related('restaurant', 'category').prefetch_related('dietary_tags', 'cuisines', 'food_categories'), id=item_id)
+    dish = get_object_or_404(MenuItem.objects.select_related('restaurant', 'category').prefetch_related('dietary_tags', 'cuisines', 'food_categories'), id=item_id, restaurant__account_status='active')
     data = add_dish_rating_summary([dict(DishSerializer(dish, context={'request': request}).data)])[0]
     data['category_name'] = dish.category.name if dish.category else None
     restaurant = dish.restaurant
@@ -398,7 +396,7 @@ def bookmark_restaurant(request, restaurant_id):
     customer, problem = customer_for_favorites(request)
     if problem:
         return problem
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
     bookmark, created = BookmarkRestaurant.objects.get_or_create(customer=customer, restaurant=restaurant)
     return Response({
         "success": True,
@@ -435,7 +433,7 @@ def list_bookmarks(request):
     customer, problem = customer_for_favorites(request)
     if problem:
         return problem
-    bookmarks = BookmarkRestaurant.objects.filter(customer=customer).select_related('restaurant').order_by('-created_at', '-id')
+    bookmarks = BookmarkRestaurant.objects.filter(customer=customer, restaurant__account_status='active').select_related('restaurant').order_by('-created_at', '-id')
 
     # Turn saved restaurants into restaurant cards.
     def to_cards(rows):
@@ -523,7 +521,7 @@ def create_review(request, restaurant_id):
     customer, problem = customer_for(request, "write a review")
     if problem:
         return problem
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
 
     rating, comment, problem = read_rating_and_comment(request)
     if problem:
@@ -562,7 +560,7 @@ def delete_review(request, restaurant_id):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def list_reviews(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
     customer, role = who_is_asking(request)
 
     reviews = Review.objects.filter(restaurant=restaurant)
@@ -600,7 +598,7 @@ def create_dish_review(request, item_id):
     customer, problem = customer_for(request, "rate a dish")
     if problem:
         return problem
-    dish = get_object_or_404(MenuItem, id=item_id)
+    dish = get_object_or_404(MenuItem, id=item_id, restaurant__account_status='active')
     rating, comment, problem = read_rating_and_comment(request)
     if problem:
         return problem
@@ -638,7 +636,7 @@ def delete_dish_review(request, item_id):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def list_dish_reviews(request, item_id):
-    dish = get_object_or_404(MenuItem, id=item_id)
+    dish = get_object_or_404(MenuItem, id=item_id, restaurant__account_status='active')
     customer, role = who_is_asking(request)
 
     reviews = DishReview.objects.filter(menu_item=dish)
@@ -674,7 +672,7 @@ def list_dish_reviews(request, item_id):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def list_restaurant_dish_reviews(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
     reviews = DishReview.objects.filter(menu_item__restaurant=restaurant)
 
     try:
@@ -753,7 +751,7 @@ def create_report(request, restaurant_id):
     customer, problem = customer_for(request, "report a restaurant")
     if problem:
         return problem
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, account_status="active")
 
     description = request.data.get('description')
     if not isinstance(description, str) or not description.strip():

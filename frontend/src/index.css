@@ -41,3 +41,54 @@ button {
   background: #c9b8a3;
   border-radius: 10px;
 }
+
+.restaurant-documents {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.restaurant-documents ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.restaurant-documents li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.restaurant-documents button {
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 14px;
+  background: #e5732c;
+  color: #fff;
+  cursor: pointer;
+}
+
+.restaurant-documents em {
+  color: #6b7280;
+}
+
+.restaurant-documents-upload {
+  margin-top: 12px;
+}
+
+.restaurant-documents-upload:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.restaurant-documents-message {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}

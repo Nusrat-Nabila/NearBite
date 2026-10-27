@@ -2454,3 +2454,66 @@ fieldset.owner-food-modal-availability legend {
     padding: 16px;
   }
 }
+
+/* Documents on My Profile: line up with the form fields above */
+.owner-profile-card .restaurant-documents {
+  max-width: 900px;
+  margin: 35px auto 0;
+  padding: 0 0 0 225px;
+}
+
+.owner-profile-card .restaurant-documents > * {
+  max-width: 510px;
+}
+
+.owner-profile-card .restaurant-documents h3 {
+  margin: 0 0 10px;
+  color: #252525;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.owner-profile-card .restaurant-documents ul {
+  margin: 0;
+  gap: 12px;
+}
+
+.owner-profile-card .restaurant-documents li {
+  min-height: 40px;
+  padding: 0 8px 0 14px;
+  border: 1px solid #d7cfc5;
+  border-radius: 6px;
+  background: #fff;
+  color: #252525;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.owner-profile-card .restaurant-documents li button,
+.owner-profile-card .restaurant-documents-upload {
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: var(--owner-orange, #f26a1b);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.owner-profile-card .restaurant-documents li input[type="file"] {
+  max-width: 60%;
+  font-size: 11px;
+}
+
+.owner-profile-card .restaurant-documents em {
+  font-size: 11px;
+  font-weight: 400;
+}
+
+@media (max-width: 760px) {
+  .owner-profile-card .restaurant-documents {
+    padding-left: 0;
+  }
+
+  .owner-profile-card .restaurant-documents > * {
+    max-width: none;
+  }
+}

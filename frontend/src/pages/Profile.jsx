@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 import { apiCall, errorMessage, mapBackendUser } from "../api";
+import DeleteAccountPanel from "../components/DeleteAccountPanel";
 
 // Default profile image
 import defaultProfileImage from "../Image/profile.png";
@@ -782,6 +783,19 @@ export default function Profile({
                   </div>
                 )}
               </form>
+
+              <DeleteAccountPanel
+                className="profile-danger-zone"
+                buttonClassName="profile-danger-button"
+                endpoint={`/api/delete_customer/${user.id}/`}
+                accountName={user.name}
+                onScheduled={() => {
+                  window.alert(
+                    "Your account will be deleted in 30 days. We emailed you. Log in again before then to keep it."
+                  );
+                  onLogout?.();
+                }}
+              />
             </section>
           </div>
         </div>

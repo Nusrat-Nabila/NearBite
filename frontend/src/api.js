@@ -235,6 +235,22 @@ export async function apiFetch(path, options = {}) {
   };
 }
 
+// Download a file (a PDF, say) with the signed-in token. Returns the file as a Blob, or null.
+export async function apiBlob(path) {
+  let response = await send(path);
+
+  if (response.status === 401 && session) {
+    if (await refreshAccessToken()) {
+      response = await send(path);
+    } else {
+      saveSession(null);
+      onSessionExpired?.();
+    }
+  }
+
+  return response.ok ? response.blob() : null;
+}
+
 /* ================= ERROR MESSAGES ================= */
 
 // The backend answers errors as { error: "..." }, { detail: "..." } or, for a form,

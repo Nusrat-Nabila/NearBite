@@ -23,11 +23,12 @@
     Image as ImageIcon,
     Search,
     Tag,
-    Trash2,
     Navigation,
   } from "lucide-react";
 
   import { apiCall, errorMessage, fetchAllPages, mapBackendUser } from "../api";
+  import RestaurantDocuments from "../components/RestaurantDocuments";
+  import DeleteAccountPanel from "../components/DeleteAccountPanel";
   import OwnerOffers from "./OwnerOffers";
 
   import logoImage from "../Image/logo.png";
@@ -1884,30 +1885,6 @@ function Field({
       showNotification("Your restaurant was found on the map.");
     };
 
-    // ================= DELETE ACCOUNT =================
-
-    const handleDeleteAccount = async () => {
-      if (
-        !window.confirm(
-          "Delete your restaurant account? Your menu, offers and reviews will be removed for good."
-        )
-      ) {
-        return;
-      }
-
-      const { ok, data } = await apiCall(
-        `/api/delete_restaurant/${restaurantId}/`,
-        { method: "DELETE" }
-      );
-
-      if (!ok) {
-        showNotification(errorMessage(data));
-        return;
-      }
-
-      handleLogout();
-    };
-
     // ================= MODAL EFFECT =================
 
     useEffect(() => {
@@ -2411,24 +2388,21 @@ function Field({
                 </div>
               </form>
 
-              <div className="owner-danger-zone">
-                <div>
-                  <strong>Delete Account</strong>
-                  <p>
-                    This removes your restaurant, menu, offers and
-                    reviews for good.
-                  </p>
-                </div>
+              <RestaurantDocuments restaurantId={restaurantId} canUpload />
 
-                <button
-                  type="button"
-                  className="owner-menu-delete owner-danger-button"
-                  onClick={handleDeleteAccount}
-                >
-                  <Trash2 size={15} />
-                  Delete Account
-                </button>
-              </div>
+              <DeleteAccountPanel
+                className="owner-danger-zone"
+                buttonClassName="owner-menu-delete owner-danger-button"
+                endpoint={`/api/delete_restaurant/${restaurantId}/`}
+                accountName={profile.restaurantName}
+                description="Your restaurant will be deleted after 30 days, with its menu, offers and reviews. Log in again before then to keep it."
+                onScheduled={() => {
+                  window.alert(
+                    "Your account will be deleted in 30 days. We emailed you. Log in again before then to keep it."
+                  );
+                  handleLogout();
+                }}
+              />
             </section>
           )}
 

@@ -162,7 +162,9 @@
   box-shadow: 0 0 0 3px rgba(168, 32, 12, 0.09);
 }
 
-.owner-field-icon {
+.owner-form-page .owner-field-icon {
+  position: static;
+  pointer-events: auto;
   display: grid;
   flex: 0 0 17px;
   width: 17px;
@@ -172,7 +174,7 @@
   color: #171717;
 }
 
-.owner-field-icon svg {
+.owner-form-page .owner-field-icon svg {
   display: block;
   width: 16px;
   height: 16px;
@@ -472,4 +474,25 @@
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* PDF upload fields */
+
+.owner-input-wrap > input[type="file"] {
+  width: 100%;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.owner-input-wrap > input[type="file"]::file-selector-button {
+  height: 22px;
+  margin-right: 10px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--owner-red);
+  color: #fff;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
 }

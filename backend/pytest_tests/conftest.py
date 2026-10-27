@@ -14,6 +14,12 @@ def clean_cache():
     cache.clear()
 
 
+@pytest.fixture(autouse=True)
+def private_documents_dir(tmp_path, monkeypatch):
+    from account.models import private_storage
+    monkeypatch.setattr(private_storage, 'location', str(tmp_path))
+
+
 @pytest.fixture
 def client():
     return APIClient()

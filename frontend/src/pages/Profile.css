@@ -810,3 +810,46 @@
     transition: none;
   }
 }
+
+
+/* Delete account */
+.profile-danger-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 28px;
+  padding: 16px 18px;
+  border: 1px solid #f0c4ba;
+  border-radius: 10px;
+  background: #fff6f3;
+}
+
+.profile-danger-zone strong {
+  color: #a8200c;
+  font-size: 14px;
+}
+
+.profile-danger-zone p {
+  margin: 4px 0 0;
+  color: #777;
+  font-size: 12px;
+}
+
+.profile-danger-button {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #f9d9d2;
+  color: #a8200c;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .profile-danger-zone {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

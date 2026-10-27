@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from account.models import Admin, Customer, Restaurant, RestaurantRequest
 from account.pagination import paginated_response
-from account.serializers import AdminSerializer
+from account.serializers import AdminSerializer, RestaurantSerializer
 from account.views import is_admin, is_owner, admin_only_response, not_authorized_response, sync_user_auth
 from restaurant.models import RATING_VALUES, DietaryTag, Cuisine, FoodCategory, DishReview, Review
 from restaurant.moderation import send_review_removed_email
@@ -39,6 +39,16 @@ def update_admin_profile(request, admin_id):
         sync_user_auth(old_email, "admin", admin.admin_name, admin.admin_email, admin.admin_password)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# List every restaurant, including suspended and disabled ones, for the admin.
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_list_restaurant(request):
+    if not is_admin(request.user):
+        return admin_only_response()
+    restaurants = Restaurant.objects.all().order_by('name', 'id')
+    return paginated_response(request, restaurants, lambda rows: RestaurantSerializer(rows, many=True, context={'request': request}).data)
 
 
 # List all dietary tags.

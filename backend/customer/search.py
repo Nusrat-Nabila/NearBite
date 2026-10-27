@@ -129,7 +129,7 @@ def parse_search_params(query):
 
 # Get the restaurants that pass the text and tag filters.
 def restaurant_queryset(params):
-    restaurants = Restaurant.objects.all()
+    restaurants = Restaurant.objects.filter(account_status='active')
     dishes = MenuItem.objects.filter(restaurant=OuterRef('pk'))
 
     for word in params['words']:
