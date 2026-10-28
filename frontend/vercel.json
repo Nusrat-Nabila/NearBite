@@ -1,7 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://nabila254.pythonanywhere.com/api/:path*" },
-    { "source": "/media/:path*", "destination": "https://nabila254.pythonanywhere.com/media/:path*" },
+    { "source": "/api/(.*)", "destination": "https://nabila254.pythonanywhere.com/api/$1" },
+    { "source": "/media/(.*)", "destination": "https://nabila254.pythonanywhere.com/media/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
